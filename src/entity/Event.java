@@ -114,7 +114,7 @@ public class Event {
 		str += "', date: '";
 		if (date != null) str += date;
 		str += "', duration: " + duration;
-		str += "', Attachments: [";
+		str += ", Attachments: [";
 		if (attachments != null && attachments.size() > 0) {
 			for (int i = 0; i < attachments.size(); i++) {
 				str += attachments.get(i).toJson();
@@ -134,6 +134,7 @@ public class Event {
 		str += ", Contractor: ";
 		if (contractor != null) str += contractor.toJson();
 		else str += "{}";
+		str += "}";
 		return str;
 	}
 }
