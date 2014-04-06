@@ -1,6 +1,8 @@
 package servlet;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -11,7 +13,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import service.CRMException;
 import service.Service;
+import entity.BusinessScale;
+import entity.City;
 import entity.Company;
+import entity.CompanyStatus;
+import entity.Employee;
+import entity.Segment;
+import entity.Tag;
 
 /**
  * Servlet implementation class CompanyServlet
@@ -66,7 +74,7 @@ public class CompanyServlet extends HttpServlet {
 		switch(request.getParameter("action")){
 		
 			case "new":
-/*
+
 				Company c = new Company(0,
 						request.getParameter("name"), 
 						request.getParameter("info"), 
@@ -74,33 +82,33 @@ public class CompanyServlet extends HttpServlet {
 						new ArrayList<String>(Arrays.asList(request.getParameter("phones").split(","))),//phones, 
 						new ArrayList<String>(Arrays.asList(request.getParameter("emails").split(","))), 
 						new ArrayList<String>(Arrays.asList(request.getParameter("skypes").split(","))), 
-						city, 
-						segment, 
-						companyStatus,
-						businessScale, 
-						employee, 
-						tags);
+						new City(Integer.parseInt(request.getParameter("City")), "", 0, 0), 
+						new Segment(Integer.parseInt(request.getParameter("City")), "", ""), 
+						new CompanyStatus(Integer.parseInt(request.getParameter("CompanyStatus")), "", ""),
+						new BusinessScale(Integer.parseInt(request.getParameter("BusinessScale")), "", ""),
+						new Employee(Integer.parseInt(request.getParameter("Employee")), "", "", "", "", "", 'S', ""), 
+						new ArrayList<Tag>());
 				
 									
 				
-				s.addCompany(c);*/
+				s.addCompany(c);
 						
 						break;
 			case "edit":
-				/*
-				Employee e_e = new Employee(Integer.parseInt(request.getParameter("id")), 
-						request.getParameter("login"),
-						request.getParameter("password"),
-						request.getParameter("first_name"),
-						request.getParameter("middle_name"),
-						request.getParameter("last_name"),
-						request.getParameter("role").charAt(0),
-						request.getParameter("email"),
-						request.getParameter("email_password"));
-						
-						
-						s.editEmployee(e_e);
-						*/
+				Company c_c = new Company(Integer.parseInt(request.getParameter("id")),
+						request.getParameter("name"), 
+						request.getParameter("info"), 
+						request.getParameter("site"),
+						new ArrayList<String>(Arrays.asList(request.getParameter("phones").split(","))), 
+						new ArrayList<String>(Arrays.asList(request.getParameter("emails").split(","))), 
+						new ArrayList<String>(Arrays.asList(request.getParameter("skypes").split(","))), 
+						new City(Integer.parseInt(request.getParameter("City")), "", 0, 0), 
+						new Segment(Integer.parseInt(request.getParameter("City")), "", ""), 
+						new CompanyStatus(Integer.parseInt(request.getParameter("CompanyStatus")), "", ""),
+						new BusinessScale(Integer.parseInt(request.getParameter("BusinessScale")), "", ""),
+						new Employee(Integer.parseInt(request.getParameter("Employee")), "", "", "", "", "", 'S', ""), 
+						new ArrayList<Tag>());
+				s.editCompany(c_c);
 						break;
 			case "delete":
 				s.removeEmployee(Integer.parseInt(request.getParameter("id")));
