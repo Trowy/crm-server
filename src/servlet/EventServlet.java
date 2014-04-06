@@ -1,7 +1,7 @@
 package servlet;
 
 import java.io.IOException;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -12,7 +12,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import service.CRMException;
 import service.Service;
+import entity.Attachment;
 import entity.Event;
+import entity.EventStatus;
+import entity.EventType;
 
 /**
  * Servlet implementation class EventServlet
@@ -73,18 +76,37 @@ public class EventServlet extends HttpServlet {
 		switch(request.getParameter("action")){
 		
 			case "new":
-				//Event e = new Event(id, title, info, date, duration, attachments, eventStatus, eventType, company, contractor);
+				Event e = new Event(0, 
+						request.getParameter("title"),
+						request.getParameter("info"),
+						new java.sql.Date(114, 1, 2),
+						Integer.parseInt(request.getParameter("duration")),
+						new ArrayList<Attachment>(),
+						new EventStatus(Integer.parseInt(request.getParameter("eventStatus")), "", ""),
+						new EventType(Integer.parseInt(request.getParameter("eventType")), "", ""),
+						s.getCompany(Integer.parseInt(request.getParameter("company"))),
+						s.getContractor(Integer.parseInt(request.getParameter("contractor")))
+						);
 						
 				
-				//s.addEvent(e);
+				s.addEvent(e);
 						
 						break;
 			case "edit":
 				
-				//Event e_e = new Event(id, title, info, date, duration, attachments, eventStatus, eventType, company, contractor);
+				Event e_e = new Event(Integer.parseInt(request.getParameter("id")), 
+						request.getParameter("title"),
+						request.getParameter("info"),
+						new java.sql.Date(114, 1, 2),
+						Integer.parseInt(request.getParameter("duration")),
+						new ArrayList<Attachment>(),
+						new EventStatus(Integer.parseInt(request.getParameter("eventStatus")), "", ""),
+						new EventType(Integer.parseInt(request.getParameter("eventType")), "", ""),
+						s.getCompany(Integer.parseInt(request.getParameter("company"))),
+						s.getContractor(Integer.parseInt(request.getParameter("contractor")))
+						);
 						
-						
-					//	s.editEmployee(e_e);
+						s.editEvent(e_e);
 						
 						break;
 			case "delete":

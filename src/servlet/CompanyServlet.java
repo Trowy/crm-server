@@ -68,6 +68,11 @@ public class CompanyServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.addHeader("Access-Control-Allow-Origin","*");
+        response.addHeader("Access-Control-Allow-Methods","GET, PUT, POST, DELETE, OPTIONS");
+        response.addHeader("Access-Control-Max-Age","000");
+        response.addHeader("Access-Control-Allow-Headers","Content-Type, Authorization, X-Requested-With");
+        response.addHeader("Content-Type","application/json");
 		try {
 			Service s = new Service();
 			
@@ -92,6 +97,10 @@ public class CompanyServlet extends HttpServlet {
 									
 				
 				s.addCompany(c);
+				
+				response.getWriter().print("{success: true}");
+				response.getWriter().flush();
+		        response.getWriter().close();
 						
 						break;
 			case "edit":
@@ -109,15 +118,24 @@ public class CompanyServlet extends HttpServlet {
 						new Employee(Integer.parseInt(request.getParameter("Employee")), "", "", "", "", "", 'S', ""), 
 						new ArrayList<Tag>());
 				s.editCompany(c_c);
+				
+				response.getWriter().print("{success: true}");
+				response.getWriter().flush();
+		        response.getWriter().close();
+				
 						break;
 			case "delete":
 				s.removeEmployee(Integer.parseInt(request.getParameter("id")));
 				
 		}
 		
-		} catch (CRMException e1) {			
+		} catch (CRMException e1) {
+			response.getWriter().print("{success: false}");
+			response.getWriter().flush();
+	        response.getWriter().close();
 			e1.printStackTrace();
 		}
+		
 	}
 
 }
