@@ -31,10 +31,10 @@ public class PostgresqlDBConnection {
     {
         try {
         	Class.forName("org.postgresql.Driver");
-        	 connection = DriverManager.getConnection(
-             		"jdbc:postgresql://localhost:6543/crm",  // url
-             		"postgres", 						// user
-             		"qweasdzxc123");						// psw
+       	 connection = DriverManager.getConnection(
+          		"jdbc:postgresql://localhost:6543/crm",  // url
+          		"postgres", 						// user
+          		"qweasdzxc123");						// psw
             //log.debug("Connection without errors");
         } catch (SQLException ex) {
             //log.fatal("DBConnection is failed!", ex);

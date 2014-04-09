@@ -1,5 +1,6 @@
 package vkr;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -14,6 +15,7 @@ import entity.Employee;
 import entity.Event;
 import entity.EventStatus;
 import entity.EventType;
+import entity.Log;
 import entity.Segment;
 import entity.Tag;
 import service.CRMException;
@@ -27,7 +29,7 @@ public class Main {
 	public static void main(String[] args) {
 		try {
 			service = new Service();
-			feelDatabase(); // random generate data for all tables
+			//feelDatabase(); // random generate data for all tables
 			
 			//List<Event> events = service.getEvents(7, new Date(114, 0, 1), 0, 50, 1, false, 2, "title2999");
 			//for (int i = 0; i < events.size(); i++)
@@ -44,6 +46,27 @@ public class Main {
 			//	System.out.println(companies.get(i).toJson());
 			//System.out.println(service.getCompaniesCount(1, 1, true, 5, "phone"));
 			
+			//service.removeTags(14);
+			//service.removeBusinessScale(15);
+			//service.removeCompanyStatus(3);
+			//service.removeSegment(2);
+			//service.removeCity(2);
+			//service.removeEventStatus(2);
+			//service.removeEventType(2);
+			//service.removeEvent(15);
+			//service.removeCompany(1);
+			
+			//List<Log> logs = service.getLogs(0, new Date(114,3,5), 0, 50, 0, false, null);
+			//for (int i = 0; i < logs.size(); i++)
+			//	System.out.println(logs.get(i).toJson());
+			//System.out.println(service.getLogsCount(0, null, 0, true, "QQQ"));
+			
+			//Attachment att = new Attachment("E:\\tt\\Обои\\2.bmp", 0);
+			//List<Attachment> atts = new ArrayList<Attachment>();
+			//atts.add(att);
+			//service.sendEmail("tomsktest123@yandex.ru", "ghbdtnrfrltkf", "tomsktest123@yandex.ru", 
+			//	"test send mail", "simple text, hate this word", atts, null, null);
+			//System.out.println(service.generateReport(2));
 		} catch (CRMException e) {
 			e.printStackTrace();
 			System.err.println("#1 MSG: " + e.msg);

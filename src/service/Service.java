@@ -1,13 +1,33 @@
 package service;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.nio.file.FileSystemAlreadyExistsException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Properties;
+
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMessage.RecipientType;
+import javax.mail.internet.MimeMultipart;
 
 import org.apache.log4j.Logger;
 
@@ -22,6 +42,7 @@ import entity.Employee;
 import entity.Event;
 import entity.EventStatus;
 import entity.EventType;
+import entity.Log;
 import entity.Segment;
 import entity.Tag;
 
@@ -1169,6 +1190,123 @@ public class Service {
 		return getCount(query);
 	}
 	
+	/**
+	 * @param employee_id
+	 * @param date
+	 * @param offset
+	 * @param limit
+	 * @param order_col_num
+	 * 						1 log_id int
+	 * 						2 action ('I', 'U', 'D') char(1)
+	 * 						3 object (0 events, 1 companies) int
+	 * 						4 value_id int
+	 * 						5 value_desc text
+	 * 						6 date timestamp
+	 * 						7 employee_id int
+	 * @param order_direction
+	 * @param search_value
+	 * @return
+	 * @throws CRMException
+	 */
+	@SuppressWarnings("deprecation")
+	public List<Log> getLogs(int employee_id, Date date, int offset, int limit, int order_col_num,
+			boolean order_direction, String search_value) throws CRMException {
+		List<Log> logs = new ArrayList<Log>();
+		String query = "";
+		if (date == null) date = new Date(114, 0, 1);
+		if (offset < 0) offset = 0;
+		if (limit < 0) limit = 50;
+		if (employee_id == 0)
+			query = "SELECT * FROM logs l WHERE l.date > '" + date + "'";
+		else
+			query = "SELECT * FROM logs l WHERE l.employee_id = " +employee_id +
+			  " AND l.date > '" + date + "'";
+		if (search_value != null && !search_value.isEmpty()) {
+			query += " AND value_desc ILIKE '%'||'" + search_value + "'||'%'";
+		}
+		query += " ORDER BY ";
+		switch (order_col_num) {
+		case 1: query += "l.log_id"; break;
+		case 2: query += "l.action"; break;
+		case 3: query += "l.object"; break;
+		case 4: query += "l.value_id"; break;
+		case 5: query += "l.value_desc"; break;
+		case 6: query += "l.date"; break;
+		case 7: query += "l.employee_id"; break;
+		default: query += "l.log_id";
+		}
+		if (!order_direction)
+			query += " ASC";
+		else query += " DESC";
+		query += " LIMIT " + limit;
+		query += " OFFSET " + offset;
+		try {
+		Statement statement = connection.createStatement();
+		ResultSet resultSet = statement.executeQuery(query);
+		while (resultSet.next()) {
+			Employee employee = buffer.getEmployee(resultSet.getInt("employee_id"));
+			char raw_action = resultSet.getString("action").charAt(0);
+			String action = "";
+			if (raw_action == 'I') action = "insert";
+			else if (raw_action == 'U') action = "update";
+			else action = "delete";
+			int raw_object = resultSet.getInt("object");
+			String object = "";
+			if (raw_object == 0) object = "event";
+			else object = "company";
+			Timestamp raw_date = resultSet.getTimestamp("date");
+			Date res_date = new Date(raw_date.getTime());
+			Log log = new Log(
+					resultSet.getInt("log_id"), 
+					action, 
+					object, 
+					resultSet.getInt("value_id"), 
+					resultSet.getString("value_desc"), 
+					res_date, 
+					employee);
+			logs.add(log);
+		}
+		resultSet.close();
+		statement.close();
+		} catch (SQLException e1) {
+			log.debug("Error: ", e1);
+			e1.printStackTrace();
+			throw new CRMException(defaultErrorMsg);
+		}
+		return logs;
+	}
+	
+	@SuppressWarnings("deprecation")
+	public int getLogsCount(int employee_id, Date date, int order_col_num,
+			boolean order_direction, String search_value) throws CRMException {
+		String query = "";
+		if (date == null) date = new Date(114, 0, 1);
+		if (employee_id == 0)
+			query = "SELECT COUNT (*) FROM (SELECT * FROM logs l WHERE l.date > '" + date + "'";
+		else
+			query = "SELECT COUNT (*) FROM (SELECT * FROM logs l WHERE l.employee_id = " +employee_id +
+			  " AND l.date > '" + date + "'";
+		if (search_value != null && !search_value.isEmpty()) {
+			query += " AND value_desc ILIKE '%'||'" + search_value + "'||'%'";
+		}
+		query += " ORDER BY ";
+		switch (order_col_num) {
+		case 1: query += "l.log_id"; break;
+		case 2: query += "l.action"; break;
+		case 3: query += "l.object"; break;
+		case 4: query += "l.value_id"; break;
+		case 5: query += "l.value_desc"; break;
+		case 6: query += "l.date"; break;
+		case 7: query += "l.employee_id"; break;
+		default: query += "l.log_id";
+		}
+		if (!order_direction)
+			query += " ASC";
+		else query += " DESC";	
+		query += ") AS ttjkee";
+		return getCount(query);
+	}
+	
 	public InsertResult addTagToCompany(int tag_id, int company_id) throws CRMException {
 		String sqlQuery = "SELECT * FROM add_companies_tag(tag_id := " + tag_id + 
 				", company_id := " + company_id + ")";
@@ -1497,18 +1635,78 @@ public class Service {
 		String sqlQuery = "SELECT * FROM remove_employee(" + employee_id + ")";
 		UpdateResult updateResult = databaseUpdateExec(sqlQuery, " remove employee with id =  '" + employee_id + "'");
 		if (updateResult.getErr_code() != 0) throw new CRMException(updateResult.getErr_msg());
+		else buffer.removeEmployee(employee_id);
 	}
 	
 	public void removeBusinessScale(int business_scale_id) throws CRMException {
+		String sqlQuery = "SELECT * FROM remove_business_scale(bssc_id := " + business_scale_id + ")";
+		UpdateResult updateResult = databaseUpdateExec(sqlQuery, " remove busienss scale with id '" + business_scale_id + "'");
+		if (updateResult.getErr_code() != 0) throw new CRMException(updateResult.getErr_msg());
+		else buffer.removeBusinessScale(business_scale_id);
+	}
+	
+	public void removeCompanyStatus(int company_status_id) throws CRMException {
+		String sqlQuery = "SELECT * FROM remove_company_status(obj_id := " + company_status_id + ")";
+		UpdateResult updateResult = databaseUpdateExec(sqlQuery, " remove company status with id '" + company_status_id + "'");
+		if (updateResult.getErr_code() != 0) throw new CRMException(updateResult.getErr_msg());
+		else buffer.removeCompanyStatus(company_status_id);
+	}
+	
+	public void removeSegment(int segment_id) throws CRMException {
+		String sqlQuery = "SELECT * FROM remove_segment(obj_id := " + segment_id + ")";
+		UpdateResult updateResult = databaseUpdateExec(sqlQuery, " remove segment with id '" + segment_id + "'");
+		if (updateResult.getErr_code() != 0) throw new CRMException(updateResult.getErr_msg());
+		else buffer.removeSegment(segment_id);
+	}
+	
+	public void removeCity(int city_id) throws CRMException {
+		String sqlQuery = "SELECT * FROM remove_city(obj_id := " + city_id + ")";
+		UpdateResult updateResult = databaseUpdateExec(sqlQuery, " remove city with id '" + city_id + "'");
+		if (updateResult.getErr_code() != 0) throw new CRMException(updateResult.getErr_msg());
+		else buffer.removeCity(city_id);
+	}
+	
+	public void removeEventStatus(int event_status_id) throws CRMException {
+		String sqlQuery = "SELECT * FROM remove_event_status(obj_id := " + event_status_id + ")";
+		UpdateResult updateResult = databaseUpdateExec(sqlQuery, " remove event status with id '" + event_status_id + "'");
+		if (updateResult.getErr_code() != 0) throw new CRMException(updateResult.getErr_msg());
+		else buffer.removeEventStatus(event_status_id);
+	}
+	
+	public void removeEventType(int event_type_id) throws CRMException {
+		String sqlQuery = "SELECT * FROM remove_event_type(obj_id := " + event_type_id + ")";
+		UpdateResult updateResult = databaseUpdateExec(sqlQuery, " remove event type with id '" + event_type_id + "'");
+		if (updateResult.getErr_code() != 0) throw new CRMException(updateResult.getErr_msg());
+		else buffer.removeEventType(event_type_id);
+	}
+	
+	public void removeContractor(int contractor_id) throws CRMException {
+		String sqlQuery = "SELECT * FROM remove_contractor(obj_id := " + contractor_id + ")";
+		UpdateResult updateResult = databaseUpdateExec(sqlQuery, " remove contractor with id '" + contractor_id + "'");
+		if (updateResult.getErr_code() != 0) throw new CRMException(updateResult.getErr_msg());
+	}
+	
+	public void removeEvent(int event_id) throws CRMException {
+		String sqlQuery = "SELECT * FROM remove_event(obj_id := " + event_id + ")";
+		UpdateResult updateResult = databaseUpdateExec(sqlQuery, " remove event with id '" + event_id + "'");
+		if (updateResult.getErr_code() != 0) throw new CRMException(updateResult.getErr_msg());
+	}
+	
+	public void removeCompany(int company_id) throws CRMException {
+		String sqlQuery = "SELECT * FROM remove_company(obj_id := " + company_id + ")";
+		UpdateResult updateResult = databaseUpdateExec(sqlQuery, " remove company with id '" + company_id + "'");
+		if (updateResult.getErr_code() != 0) throw new CRMException(updateResult.getErr_msg());
+	}
+	
+	public void removeTags(int company_id) throws CRMException {
 		try {
-			log.debug("Start remove business scale with id = " + business_scale_id);
-			String sqlQuery = "SELECT * FROM remove_business_scale(bssc_id := " + business_scale_id + ")";
+			log.debug("Start remove all company tags for company with id = " + company_id);
+			String sqlQuery = "SELECT * FROM remove_tags(cmp_id := " + company_id + ")";
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(sqlQuery);
-			buffer.removeBusinessScale(business_scale_id);
 			resultSet.close();
 			statement.close();
-			log.debug("Finish remove business scale with id = " + business_scale_id);
+			log.debug("Finish remove all company tags for company with id = " + company_id);
 		} catch (SQLException e1) {
 			log.debug("Error: ", e1);
 			throw new CRMException(defaultErrorMsg + "\n" + e1.toString());
@@ -1554,5 +1752,131 @@ public class Service {
 			throw new CRMException(defaultErrorMsg + "\n" + e1.toString());
 		}
 		return result;
+	}
+	/**
+	 * @param user like this tomsktest123@yandex.ru
+	 * @param password
+	 * @param toSend
+	 * @param subject
+	 * @param text
+	 * @param attachments
+	 * @param host default smtp.yandex.ru";
+	 * @param port default 465
+	 * @throws CRMException
+	 */
+	public void sendEmail(String user, String password,
+			String toSend, String subject, String text, List<Attachment> attachments,
+			String host, String port) throws CRMException {
+		try {
+		if (host == null || host.isEmpty())
+			host = "smtp.yandex.ru";
+		if (port == null || port.isEmpty())
+			port = "465";
+        Properties props = new Properties();
+        props.put("mail.smtp.user", user);
+        props.put("mail.smtp.host", host);
+        props.put("mail.smtp.port", port);
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.debug", "false");
+ 
+        props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        props.put("mail.smtp.socketFactory.fallback", "false");
+        props.put("mail.smtp.socketFactory.port", port);
+
+        Session session = Session.getDefaultInstance(props, null);
+
+        MimeMessage message = new MimeMessage(session);  
+        message.setFrom(new InternetAddress(user));  
+        message.setSubject(subject);
+        message.addRecipient(RecipientType.TO, new InternetAddress(toSend));
+        
+        Multipart multiPart = new MimeMultipart();  
+        MimeBodyPart messageText = new MimeBodyPart();  
+        messageText.setContent(text, "text/plain; charset=\"UTF-8\"");  
+        multiPart.addBodyPart(messageText);  
+        
+        if (attachments != null && attachments.size() > 0)
+	        for (int i = 0; i < attachments.size(); i++) {
+	        	MimeBodyPart attachment = new MimeBodyPart();  
+	        	File temp = File.createTempFile("tmpfilesimplenametooshortoknowlong", null);
+	        	temp.deleteOnExit();
+	        	BufferedWriter out = new BufferedWriter(new FileWriter(temp));
+	        	out.write(attachments.get(i).getFile().toString().toCharArray());
+	            out.close();
+	        	FileDataSource fds = new FileDataSource(temp);
+	        	attachment.setDataHandler(new DataHandler(fds));
+	        	attachment.setFileName(attachments.get(i).getName() + "." + attachments.get(i).getExtension());
+	        	multiPart.addBodyPart(attachment);       	
+	        }
+        message.setContent(multiPart);  
+        Transport transport = session.getTransport("smtp");
+        transport.connect(host, user, password);
+        transport.sendMessage(message, message.getAllRecipients());
+        transport.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new CRMException("При отправке письма произошла ошибка. Проверьте настройки соединения с почтовым сервисом и повторите попытку.");
+		}
+	}
+	
+	/**
+	 * @param length 	0 day
+	 * 					1 week
+	 * 					2 month
+	 * @return
+	 */
+	public String generateReport(int length) throws CRMException {
+		String jsonStr = "Report: [";
+		Calendar calendar = Calendar.getInstance();  
+		if (length == 0)
+			calendar.add(Calendar.DATE, -1);
+		else if (length == 1)
+			calendar.add(Calendar.DATE, -8);
+		else calendar.add(Calendar.DATE, -31);
+		List<Log> logs = new ArrayList<Log>();
+		java.sql.Date date = new java.sql.Date(calendar.getTimeInMillis());  
+		try {
+			logs = getLogs(0, date, 0, 9999, 0, false, null);
+		} catch (CRMException e) {
+			throw new CRMException(defaultErrorMsg);
+		}
+		for (int i = 0; i < buffer.getEmployees().size(); i++) {
+			int employee_id = buffer.getEmployees().get(i).getId();
+			int cmpInsert = 0; 
+			int cmpUpdate = 0;
+			int cmpDelete = 0;
+			int evtInsert = 0;
+			int evtUpdate = 0;
+			int evtDelete = 0;
+			for (int j = 0; j < logs.size(); j++) {
+				if (logs.get(j).getEmployee().getId() == employee_id) {
+					if (logs.get(j).getAction().equalsIgnoreCase("insert"))
+						if (logs.get(j).getObject().equalsIgnoreCase("event"))
+							evtInsert++;
+						else cmpInsert++;
+					else if (logs.get(j).getAction().equalsIgnoreCase("update"))
+						if (logs.get(j).getObject().equalsIgnoreCase("event"))
+							evtUpdate++;
+						else cmpUpdate++;
+					else 
+						if (logs.get(j).getObject().equalsIgnoreCase("event"))
+							cmpDelete++;
+						else evtDelete++;
+				}
+			}
+			jsonStr += "{";
+			jsonStr += "employee_id: '" + employee_id + 
+						"', cmpInsert: ' + " + cmpInsert +
+						"', cmpUpdate: ' + " + cmpUpdate +
+						"', cmpDelete: ' + " + cmpDelete +
+						"', evtInsert: ' + " + evtInsert +
+						"', evtUpdate: ' + " + evtUpdate +
+						"', evtDelete: ' + " + evtDelete + "'";
+			jsonStr += "}";
+			if (i < buffer.getEmployees().size() - 1) jsonStr +=",";
+		}
+		jsonStr += "]";
+		return jsonStr;
 	}
 }

@@ -191,8 +191,10 @@ public class Company {
 		str += ", Tags: [";
 		if (tags != null && tags.size() > 0) {
 			for (int i = 0; i < tags.size(); i++) {
-				str += tags.get(i).toJson();
-				if (i < tags.size() - 1) str +=",";
+				if (tags.get(i) != null) {
+					str += tags.get(i).toJson();
+					if (i < tags.size() - 1) str +=",";
+				}
 			}
 		}
 		str += "]";
