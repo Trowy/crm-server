@@ -7,6 +7,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import service.CRMException;
 import service.Service;
@@ -28,7 +29,14 @@ public class AuthServlet extends HttpServlet {
         response.addHeader("Access-Control-Allow-Headers","Content-Type, Authorization, X-Requested-With");
         response.addHeader("Content-Type","application/json");
         
-        response.getWriter().print("{success: false}");
+        HttpSession session = request.getSession(true);
+        
+		if(request.getParameter("employee_id") != null && !request.getParameter("employee_id").equals("0")){
+			response.getWriter().print("{success: true, employee_id: '"+Integer.parseInt(request.getParameter("employee_id"))+"', employee_role: 'S'}");
+		}else{
+			response.getWriter().print("{success: false}");       
+		}
+        
 		response.getWriter().flush();
         response.getWriter().close();
         
@@ -45,11 +53,14 @@ public class AuthServlet extends HttpServlet {
 		
         response.setContentType("application/json; charset=windows-1251"); 
         
+        HttpSession session = request.getSession();
+        
 		try {
 			Service s = new Service();			
 			Employee e = s.auth(request.getParameter("auth_login"), request.getParameter("auth_pass"));
 			response.getWriter().print("{success:true, employee_id: '"+e.getId()+"', employee_role: '"+e.getRole()+"'}");			
-			
+			session.setAttribute("employee_id", e.getId());
+			session.setAttribute("employee_role", e.getRole());			
 		} catch (CRMException e) {
 			response.getWriter().print("{success:false, errors: {auth_login:'"+e.getMessage()+"', auth_pass:'"+e.getMessage()+"'}}");			
 		}
