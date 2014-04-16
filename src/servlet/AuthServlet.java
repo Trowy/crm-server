@@ -37,7 +37,7 @@ public class AuthServlet extends HttpServlet {
                  
              
 		if(request.getSession().getAttribute("employee_id") != null){
-			response.getWriter().print("{success: true, employee_id: '"+request.getSession().getAttribute("employee_id")+"', employee_role: 'S'}");
+			response.getWriter().print("{success: true, employee_id: '"+request.getSession().getAttribute("employee_id")+"', employee_role: '"+request.getSession().getAttribute("employee_role")+"'}");
 		}else{
 			response.getWriter().print("{success: false}");       
 		}
