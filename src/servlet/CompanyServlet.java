@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,21 +41,28 @@ public class CompanyServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.addHeader("Access-Control-Allow-Origin","*");
+		response.addHeader("Access-Control-Allow-Origin","http://crm.local");
         response.addHeader("Access-Control-Allow-Methods","GET, PUT, POST, DELETE, OPTIONS");
         response.addHeader("Access-Control-Max-Age","000");
         response.addHeader("Access-Control-Allow-Headers","Content-Type, Authorization, X-Requested-With");
+        response.addHeader("Access-Control-Allow-Credentials","true");
         response.addHeader("Content-Type","application/json");
+        response.setContentType("application/json; charset=windows-1251");
+        
+      
         
         try {
 			Service s = new Service();
-			List<Company> l = s.getCompanies(3, 0, 2, 1,
-					false, 0, "");
-			String res = "";
+			String res = "";		
+			
+			List<Company> l = s.getCompanies(0, 0, 1000, 1, false, 0, "");
+				
+			if(l.size()==0){res=",";}
 			for (Company company : l) {
 				res += company.toJson()+",";
 			}			
-			res = res.substring(0, res.length()-1);
+			res = res.substring(0, res.length()-1);			
+			
 			response.getWriter().print("{'data':["+res+"]}");
 		} catch (CRMException e) {
 			response.getWriter().print("{'data':[]}");
@@ -68,11 +76,13 @@ public class CompanyServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.addHeader("Access-Control-Allow-Origin","*");
+		response.addHeader("Access-Control-Allow-Origin","http://crm.local");
         response.addHeader("Access-Control-Allow-Methods","GET, PUT, POST, DELETE, OPTIONS");
         response.addHeader("Access-Control-Max-Age","000");
         response.addHeader("Access-Control-Allow-Headers","Content-Type, Authorization, X-Requested-With");
+        response.addHeader("Access-Control-Allow-Credentials","true");
         response.addHeader("Content-Type","application/json");
+        response.setContentType("application/json; charset=windows-1251");
 		try {
 			Service s = new Service();
 			

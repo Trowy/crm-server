@@ -36,12 +36,13 @@ public class EventServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.addHeader("Access-Control-Allow-Origin","*");
+		response.addHeader("Access-Control-Allow-Origin","http://crm.local");
         response.addHeader("Access-Control-Allow-Methods","GET, PUT, POST, DELETE, OPTIONS");
         response.addHeader("Access-Control-Max-Age","000");
         response.addHeader("Access-Control-Allow-Headers","Content-Type, Authorization, X-Requested-With");
-        
+        response.addHeader("Access-Control-Allow-Credentials","true");
         response.addHeader("Content-Type","application/json");
+        response.setContentType("application/json; charset=windows-1251");
         
         try {
 			Service s = new Service();
@@ -59,6 +60,7 @@ public class EventServlet extends HttpServlet {
 			
 			//List<Event> l = s.getEvents(0, null, 0,1,121,false,0,"");
 			String res = "";
+			if(l.size()==0){res=",";}
 			for (Event event : l) {
 				res += event.toJson()+",";
 			}			
@@ -76,12 +78,14 @@ public class EventServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.addHeader("Access-Control-Allow-Origin","*");
+		response.addHeader("Access-Control-Allow-Origin","http://crm.local");
         response.addHeader("Access-Control-Allow-Methods","GET, PUT, POST, DELETE, OPTIONS");
         response.addHeader("Access-Control-Max-Age","000");
         response.addHeader("Access-Control-Allow-Headers","Content-Type, Authorization, X-Requested-With");
-        
+        response.addHeader("Access-Control-Allow-Credentials","true");
         response.addHeader("Content-Type","application/json");
+        response.setContentType("application/json; charset=windows-1251");
+        
 		try {
 			Service s = new Service();
 			System.out.println(request.getParameter("action"));

@@ -23,14 +23,17 @@ public class AuthServlet extends HttpServlet {
    
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		response.addHeader("Access-Control-Allow-Origin","*");
+		response.addHeader("Access-Control-Allow-Origin","http://crm.local");
         response.addHeader("Access-Control-Allow-Methods","GET, PUT, POST, DELETE, OPTIONS");
         response.addHeader("Access-Control-Max-Age","000");
         response.addHeader("Access-Control-Allow-Headers","Content-Type, Authorization, X-Requested-With");
+        response.addHeader("Access-Control-Allow-Credentials","true");
         response.addHeader("Content-Type","application/json");
-                        
-		if(request.getParameter("employee_id") != null && !request.getParameter("employee_id").equals("undefined")){
-			response.getWriter().print("{success: true, employee_id: '"+Integer.parseInt(request.getParameter("employee_id"))+"', employee_role: 'S'}");
+        response.setContentType("application/json; charset=windows-1251");
+                 
+             
+		if(request.getSession().getAttribute("employee_id") != null){
+			response.getWriter().print("{success: true, employee_id: '"+request.getSession().getAttribute("employee_id")+"', employee_role: 'S'}");
 		}else{
 			response.getWriter().print("{success: false}");       
 		}
@@ -43,12 +46,12 @@ public class AuthServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		response.addHeader("Access-Control-Allow-Origin","*");
+		response.addHeader("Access-Control-Allow-Origin","http://crm.local");
         response.addHeader("Access-Control-Allow-Methods","GET, PUT, POST, DELETE, OPTIONS");
         response.addHeader("Access-Control-Max-Age","000");
         response.addHeader("Access-Control-Allow-Headers","Content-Type, Authorization, X-Requested-With");
+        response.addHeader("Access-Control-Allow-Credentials","true");
         response.addHeader("Content-Type","application/json");
-		
         response.setContentType("application/json; charset=windows-1251");        
         
 		try {
@@ -56,7 +59,8 @@ public class AuthServlet extends HttpServlet {
 			Service s = new Service();			
 			Employee e = s.auth(request.getParameter("auth_login"), request.getParameter("auth_pass"));			
 			response.getWriter().print("{success:true, employee_id: '"+e.getId()+"', employee_role: '"+e.getRole()+"'}");			
-						
+			request.getSession().setAttribute("employee_id", e.getId());
+			request.getSession().setAttribute("employee_role", e.getRole());
 		} catch (CRMException e) {
 			response.getWriter().print("{success:false, errors: {auth_login:'"+e.getMessage()+"', auth_pass:'"+e.getMessage()+"'}}");			
 		}

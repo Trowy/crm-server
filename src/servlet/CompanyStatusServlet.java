@@ -23,17 +23,19 @@ public class CompanyStatusServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	response.addHeader("Access-Control-Allow-Origin","*");
+    	response.addHeader("Access-Control-Allow-Origin","http://crm.local");
         response.addHeader("Access-Control-Allow-Methods","GET, PUT, POST, DELETE, OPTIONS");
         response.addHeader("Access-Control-Max-Age","000");
         response.addHeader("Access-Control-Allow-Headers","Content-Type, Authorization, X-Requested-With");
-        
+        response.addHeader("Access-Control-Allow-Credentials","true");
         response.addHeader("Content-Type","application/json");
+        response.setContentType("application/json; charset=windows-1251");
         
         try {
 			Service s = new Service();
 			List<CompanyStatus> l = s.getCompanyStatuses();
 			String res = "";
+			if(l.size()==0){res=",";}
 			for (CompanyStatus companyStatus : l) {
 				res += companyStatus.toJson()+",";
 			}			
@@ -48,12 +50,13 @@ public class CompanyStatusServlet extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.addHeader("Access-Control-Allow-Origin","*");
+		response.addHeader("Access-Control-Allow-Origin","http://crm.local");
         response.addHeader("Access-Control-Allow-Methods","GET, PUT, POST, DELETE, OPTIONS");
         response.addHeader("Access-Control-Max-Age","000");
         response.addHeader("Access-Control-Allow-Headers","Content-Type, Authorization, X-Requested-With");
-        
+        response.addHeader("Access-Control-Allow-Credentials","true");
         response.addHeader("Content-Type","application/json");
+        response.setContentType("application/json; charset=windows-1251");
 		try {
 			Service s = new Service();
 			
