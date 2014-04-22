@@ -51,10 +51,10 @@ public class EventServlet extends HttpServlet {
         try {
 			Service s = new Service();
 			int type=Integer.parseInt(request.getParameter("type"));
-			List<Event> l = s.getEvents(0, null, 0,1,121,false,0,"");
-			if(type==1){l = s.getEvents(0, null, 0,1,121,false,0,"");}
-			if(type==2){l = s.getEvents(0, new java.sql.Date(114, 0, 1), 0,1000,1,false,0,"");}
-			if(type==3){l = s.getEvents(0, new java.sql.Date(114, 1, 1), 0,1000,1,false,0,"");}
+			List<Event> l = s.getEvents(0, null, 0,1000,1,false,0,"");
+			if(type==1){l = s.getEvents(0, null, 0,1000,1,false,0,"");}
+			if(type==2){l = s.getEvents(0, new java.sql.Date(114, 1, 1), 0,1000,1,false,0,"");}
+			if(type==3){l = s.getEvents(0, new java.sql.Date(114, 1, 3), 0,1000,1,false,0,"");}
 			if(type==4){l = s.getEvents(0, null, 0,1000,1,false,8,request.getParameter("comp"));}
 			if(type==5){l = s.getEvents(0, new java.sql.Date(114, 0, 1), 0,1000,1,false,8,request.getParameter("comp"));}
 			if(type==6){l = s.getEvents(0, new java.sql.Date(114, 1, 1), 0,1000,1,false,8,request.getParameter("comp"));}
@@ -111,10 +111,11 @@ public class EventServlet extends HttpServlet {
 						s.getCompany(Integer.parseInt(request.getParameter("company"))),
 						s.getContractor(Integer.parseInt(request.getParameter("contractor")))
 						);
-						
+					
 				
 				s.addEvent(e);
-						
+				
+				
 						break;
 			case "edit":
 				
@@ -141,6 +142,9 @@ public class EventServlet extends HttpServlet {
 		} catch (CRMException e1) {			
 			e1.printStackTrace();
 		}
+		response.getWriter().print("{success: true}");
+		response.getWriter().flush();
+        response.getWriter().close();
 		
 	}
 
