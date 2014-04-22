@@ -94,7 +94,7 @@ public class EmployeeServlet extends HttpServlet {
 						request.getParameter("role").charAt(0),
 						request.getParameter("email"));
 						
-				
+				e.hashPassword();
 				s.addEmployee(e);
 						
 						break;
@@ -108,7 +108,7 @@ public class EmployeeServlet extends HttpServlet {
 						request.getParameter("last_name"),
 						request.getParameter("role").charAt(0),
 						request.getParameter("email"));
-						
+				e_e.hashPassword();
 						
 						s.editEmployee(e_e);
 						
