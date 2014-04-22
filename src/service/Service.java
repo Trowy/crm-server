@@ -1827,7 +1827,7 @@ public class Service {
 	 * @return
 	 */
 	public String generateReport(int length) throws CRMException {
-		String jsonStr = "Report: [";
+		String jsonStr = "{data:[";
 		Calendar calendar = Calendar.getInstance();  
 		if (length == 0)
 			calendar.add(Calendar.DATE, -1);
@@ -1876,7 +1876,7 @@ public class Service {
 			jsonStr += "}";
 			if (i < buffer.getEmployees().size() - 1) jsonStr +=",";
 		}
-		jsonStr += "]";
+		jsonStr += "]}";
 		return jsonStr;
 	}
 }
