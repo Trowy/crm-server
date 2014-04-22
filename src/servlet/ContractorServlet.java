@@ -48,7 +48,7 @@ public class ContractorServlet extends HttpServlet {
         
         //response.addHeader("Content-Type","application/json");
         response.setContentType("application/json; charset=windows-1251"); 
-        
+        if(request.getSession().getAttribute("employee_id") != null){
         try {
 			Service s = new Service();
 			List<Contractor> l = s.getContractors(0,10000,1,true,0,"");
@@ -65,6 +65,7 @@ public class ContractorServlet extends HttpServlet {
         
         response.getWriter().flush();
         response.getWriter().close();
+        }
 	}
 
 	/**
@@ -82,6 +83,7 @@ public class ContractorServlet extends HttpServlet {
         response.addHeader("Access-Control-Allow-Credentials","true");
         response.addHeader("Content-Type","application/json");
         response.setContentType("application/json; charset=windows-1251");
+        if(request.getSession().getAttribute("employee_id") != null){
 		try {
 			Service s = new Service();
 			
@@ -133,7 +135,7 @@ public class ContractorServlet extends HttpServlet {
 	        response.getWriter().close();
 		}
 	
-		
+        }
 	}
 
 }

@@ -37,7 +37,7 @@ public class SegmentServlet extends HttpServlet {
         response.addHeader("Access-Control-Allow-Credentials","true");
         response.addHeader("Content-Type","application/json");
         response.setContentType("application/json; charset=windows-1251");
-        
+        if(request.getSession().getAttribute("employee_id") != null){
         try {
 			Service s = new Service();
 			List<Segment> l = s.getSegments();
@@ -54,6 +54,7 @@ public class SegmentServlet extends HttpServlet {
         
         response.getWriter().flush();
         response.getWriter().close();
+        }
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -68,6 +69,7 @@ public class SegmentServlet extends HttpServlet {
         response.addHeader("Access-Control-Allow-Credentials","true");
         response.addHeader("Content-Type","application/json");
         response.setContentType("application/json; charset=windows-1251");
+        if(request.getSession().getAttribute("employee_id") != null){
 		try {
 			Service s = new Service();
 			
@@ -99,7 +101,7 @@ public class SegmentServlet extends HttpServlet {
 		response.getWriter().print("{success: true}");
 		response.getWriter().flush();
         response.getWriter().close();
-		
+        }
 		
 	}
 

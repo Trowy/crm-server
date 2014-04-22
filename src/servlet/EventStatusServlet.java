@@ -66,6 +66,8 @@ public class EventStatusServlet extends HttpServlet {
         response.addHeader("Access-Control-Allow-Credentials","true");
         response.addHeader("Content-Type","application/json");
         response.setContentType("application/json; charset=windows-1251");
+        
+        if(request.getSession().getAttribute("employee_id") != null){
 		try {
 			Service s = new Service();
 			
@@ -96,6 +98,7 @@ public class EventStatusServlet extends HttpServlet {
 		}response.getWriter().print("{success: true}");
 		response.getWriter().flush();
         response.getWriter().close();
+        }
 		
 		
 	}

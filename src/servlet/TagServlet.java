@@ -35,7 +35,7 @@ public class TagServlet extends HttpServlet {
         response.addHeader("Access-Control-Allow-Credentials","true");
         response.addHeader("Content-Type","application/json");
         response.setContentType("application/json; charset=windows-1251");
-        
+        if(request.getSession().getAttribute("employee_id") != null){
         try {
 			Service s = new Service();
 			List<Tag> l = s.getTags();
@@ -51,7 +51,7 @@ public class TagServlet extends HttpServlet {
 		}       
         
         response.getWriter().flush();
-        response.getWriter().close();
+        response.getWriter().close();}
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -66,6 +66,7 @@ public class TagServlet extends HttpServlet {
         response.addHeader("Access-Control-Allow-Credentials","true");
         response.addHeader("Content-Type","application/json");
         response.setContentType("application/json; charset=windows-1251");
+        if(request.getSession().getAttribute("employee_id") != null){
 		try {
 			Service s = new Service();
 			
@@ -96,7 +97,7 @@ public class TagServlet extends HttpServlet {
 		response.getWriter().print("{success: true}");
 		response.getWriter().flush();
         response.getWriter().close();
-		
+        }
 	}
 
 }

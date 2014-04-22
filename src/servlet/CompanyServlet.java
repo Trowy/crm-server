@@ -54,12 +54,12 @@ public class CompanyServlet extends HttpServlet {
         response.setContentType("application/json; charset=windows-1251");
         
         
-        
+        if(request.getSession().getAttribute("employee_id") != null){
         try {
 			Service s = new Service();
 			String res = "";		
 			
-			List<Company> l = s.getCompanies(0, 0, 1000, 1, false, 0, "");
+			List<Company> l = s.getCompanies((Integer) request.getSession().getAttribute("employee_id"), 0, 1000, 1, false, 0, "");
 				
 			if(l.size()==0){res=",";}
 			for (Company company : l) {
@@ -74,6 +74,7 @@ public class CompanyServlet extends HttpServlet {
         
         response.getWriter().flush();
         response.getWriter().close();
+        }
 	}
 
 	/**
@@ -91,6 +92,7 @@ public class CompanyServlet extends HttpServlet {
         response.addHeader("Access-Control-Allow-Credentials","true");
         response.addHeader("Content-Type","application/json");
         response.setContentType("application/json; charset=windows-1251");
+        if(request.getSession().getAttribute("employee_id") != null){
 		try {
 			Service s = new Service();
 			
@@ -153,6 +155,7 @@ public class CompanyServlet extends HttpServlet {
 	        response.getWriter().close();
 			e1.printStackTrace();
 		}
+        }
 		
 	}
 

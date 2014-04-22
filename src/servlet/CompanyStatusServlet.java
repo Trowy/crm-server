@@ -34,7 +34,7 @@ public class CompanyStatusServlet extends HttpServlet {
         response.addHeader("Access-Control-Allow-Credentials","true");
         response.addHeader("Content-Type","application/json");
         response.setContentType("application/json; charset=windows-1251");
-        
+        if(request.getSession().getAttribute("employee_id") != null){
         try {
 			Service s = new Service();
 			List<CompanyStatus> l = s.getCompanyStatuses();
@@ -51,6 +51,7 @@ public class CompanyStatusServlet extends HttpServlet {
         
         response.getWriter().flush();
         response.getWriter().close();
+        }
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -65,7 +66,8 @@ public class CompanyStatusServlet extends HttpServlet {
         response.addHeader("Access-Control-Allow-Credentials","true");
         response.addHeader("Content-Type","application/json");
         response.setContentType("application/json; charset=windows-1251");
-		try {
+        if(request.getSession().getAttribute("employee_id") != null){
+        try {
 			Service s = new Service();
 			
 		switch(request.getParameter("action")){
@@ -96,7 +98,7 @@ public class CompanyStatusServlet extends HttpServlet {
 		response.getWriter().print("{success: true}");
 		response.getWriter().flush();
         response.getWriter().close();
-		
+        }
 	}
 
 }

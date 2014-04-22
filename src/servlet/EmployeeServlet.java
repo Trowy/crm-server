@@ -43,7 +43,7 @@ public class EmployeeServlet extends HttpServlet {
         response.addHeader("Access-Control-Allow-Credentials","true");
         response.addHeader("Content-Type","application/json");
         response.setContentType("application/json; charset=windows-1251");
-        
+        if(request.getSession().getAttribute("employee_id") != null){
         try {
 			Service s = new Service();
 			List<Employee> l = s.getEmployees();
@@ -60,6 +60,7 @@ public class EmployeeServlet extends HttpServlet {
         
         response.getWriter().flush();
         response.getWriter().close();
+        }
 	}
 
 	/**
@@ -77,7 +78,7 @@ public class EmployeeServlet extends HttpServlet {
         response.addHeader("Access-Control-Allow-Credentials","true");
         response.addHeader("Content-Type","application/json");
         response.setContentType("application/json; charset=windows-1251");
-		
+        if(request.getSession().getAttribute("employee_id") != null){
 		try {
 			Service s = new Service();
 			
@@ -120,6 +121,7 @@ public class EmployeeServlet extends HttpServlet {
 		} catch (CRMException e1) {			
 			e1.printStackTrace();
 		}
+        }
 	}
 
 }

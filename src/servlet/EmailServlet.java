@@ -48,7 +48,7 @@ public class EmailServlet extends HttpServlet {
         response.addHeader("Access-Control-Allow-Credentials","true");
         response.addHeader("Content-Type","application/json");
         response.setContentType("application/json; charset=windows-1251");
-        
+        if(request.getSession().getAttribute("employee_id") != null){
 		Service s;
 		try {
 			s = new Service();
@@ -60,7 +60,7 @@ public class EmailServlet extends HttpServlet {
 		response.getWriter().print("{success: true}");
 		response.getWriter().flush();
         response.getWriter().close();
-		
+        }
 	}
 
 }

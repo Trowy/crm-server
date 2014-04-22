@@ -44,7 +44,7 @@ public class ReportServlet extends HttpServlet {
         response.addHeader("Content-Type","application/json");
         response.setContentType("application/json; charset=windows-1251");
         
-        
+        if(request.getSession().getAttribute("employee_id") != null){
         
 			
 			try {
@@ -60,7 +60,7 @@ public class ReportServlet extends HttpServlet {
         
         response.getWriter().flush();
         response.getWriter().close();
-        
+        }
         
 	}
 
