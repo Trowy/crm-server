@@ -37,15 +37,29 @@ public class EmailServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		if(request.getHeader("Origin").contains("http://crm.local")){
+        	response.addHeader("Access-Control-Allow-Origin","http://crm.local");
+        }else{
+        	response.addHeader("Access-Control-Allow-Origin","http://crm-tusur.6te.net");
+        }
+        response.addHeader("Access-Control-Allow-Methods","GET, PUT, POST, DELETE, OPTIONS");
+        response.addHeader("Access-Control-Max-Age","000");
+        response.addHeader("Access-Control-Allow-Headers","Content-Type, Authorization, X-Requested-With");
+        response.addHeader("Access-Control-Allow-Credentials","true");
+        response.addHeader("Content-Type","application/json");
+        response.setContentType("application/json; charset=windows-1251");
+        
 		Service s;
 		try {
 			s = new Service();
-			s.sendEmail(request.getParameter("user"), request.getParameter("password"), request.getParameter("toSend"), request.getParameter("subject"), request.getParameter("text"), null, null, null);
+			s.sendEmail("tserem.tusurov@yandex.ru", request.getParameter("password"), request.getParameter("toSend"), request.getParameter("subject"), request.getParameter("text"), null, null, null);
 		} catch (CRMException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		response.getWriter().print("{success: true}");
+		response.getWriter().flush();
+        response.getWriter().close();
 		
 	}
 
