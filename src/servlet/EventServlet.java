@@ -2,6 +2,7 @@ package servlet;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -100,13 +101,15 @@ public class EventServlet extends HttpServlet {
 		try {
 			Service s = new Service();
 			System.out.println(request.getParameter("action"));
+			String[] date = request.getParameter("date").split("-");
 		switch(request.getParameter("action")){
 		
 			case "new":
 				Event e = new Event(0, 
 						request.getParameter("title"),
 						request.getParameter("info"),
-						new java.sql.Date(114, 1, 2),
+						new java.sql.Date(Integer.parseInt(date[0])-1900, Integer.parseInt(date[1])-1, Integer.parseInt(date[2])),
+						//new java.sql.Date(Calendar.getInstance().getTimeInMillis()),
 						Integer.parseInt(request.getParameter("duration")),
 						new ArrayList<Attachment>(),
 						new EventStatus(Integer.parseInt(request.getParameter("eventStatus")), "", ""),
@@ -125,7 +128,7 @@ public class EventServlet extends HttpServlet {
 				Event e_e = new Event(Integer.parseInt(request.getParameter("id")), 
 						request.getParameter("title"),
 						request.getParameter("info"),
-						new java.sql.Date(114, 1, 2),
+						new java.sql.Date(Integer.parseInt(date[0])-1900, Integer.parseInt(date[1])-1, Integer.parseInt(date[2])),
 						Integer.parseInt(request.getParameter("duration")),
 						new ArrayList<Attachment>(),
 						new EventStatus(Integer.parseInt(request.getParameter("eventStatus")), "", ""),
