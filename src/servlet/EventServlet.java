@@ -52,18 +52,33 @@ public class EventServlet extends HttpServlet {
         if(request.getSession().getAttribute("employee_id") != null){
         
         try {
+        	
+        	Calendar cal = Calendar.getInstance();
+        	
+        	
+        	
+        	
 			Service s = new Service();
 			int type=Integer.parseInt(request.getParameter("type"));
+			
+			if(type==2 || type==5 || type==8){
+        		cal.add(Calendar.DATE, -7);            	
+        	}
+			
+			if(type==3 || type==6 || type==9){
+        		cal.add(Calendar.DATE, -1);            	
+        	}
+			
 			List<Event> l = s.getEvents((Integer) request.getSession().getAttribute("employee_id"), null, 0,1000,1,false,0,"");
 			if(type==1){l = s.getEvents((Integer) request.getSession().getAttribute("employee_id"), null, 0,1000,1,false,0,"");}
-			if(type==2){l = s.getEvents((Integer) request.getSession().getAttribute("employee_id"), new java.sql.Date(114, 1, 1), 0,1000,1,false,0,"");}
-			if(type==3){l = s.getEvents((Integer) request.getSession().getAttribute("employee_id"), new java.sql.Date(114, 1, 3), 0,1000,1,false,0,"");}
+			if(type==2){l = s.getEvents((Integer) request.getSession().getAttribute("employee_id"), new java.sql.Date(cal.getTimeInMillis()), 0,1000,1,false,0,"");}
+			if(type==3){l = s.getEvents((Integer) request.getSession().getAttribute("employee_id"), new java.sql.Date(cal.getTimeInMillis()), 0,1000,1,false,0,"");}
 			if(type==4){l = s.getEvents((Integer) request.getSession().getAttribute("employee_id"), null, 0,1000,1,false,8,request.getParameter("comp"));}
-			if(type==5){l = s.getEvents((Integer) request.getSession().getAttribute("employee_id"), new java.sql.Date(114, 0, 1), 0,1000,1,false,8,request.getParameter("comp"));}
-			if(type==6){l = s.getEvents((Integer) request.getSession().getAttribute("employee_id"), new java.sql.Date(114, 1, 1), 0,1000,1,false,8,request.getParameter("comp"));}
+			if(type==5){l = s.getEvents((Integer) request.getSession().getAttribute("employee_id"), new java.sql.Date(cal.getTimeInMillis()), 0,1000,1,false,8,request.getParameter("comp"));}
+			if(type==6){l = s.getEvents((Integer) request.getSession().getAttribute("employee_id"), new java.sql.Date(cal.getTimeInMillis()), 0,1000,1,false,8,request.getParameter("comp"));}
 			if(type==7){l = s.getEvents((Integer) request.getSession().getAttribute("employee_id"), null, 0,1000,1,false,9,request.getParameter("cnt"));}
-			if(type==8){l = s.getEvents((Integer) request.getSession().getAttribute("employee_id"), new java.sql.Date(114, 0, 1), 0,1000,1,false,9,request.getParameter("cnt"));}
-			if(type==9){l = s.getEvents((Integer) request.getSession().getAttribute("employee_id"), new java.sql.Date(114, 1, 1), 0,1000,1,false,9,request.getParameter("cnt"));}			
+			if(type==8){l = s.getEvents((Integer) request.getSession().getAttribute("employee_id"), new java.sql.Date(cal.getTimeInMillis()), 0,1000,1,false,9,request.getParameter("cnt"));}
+			if(type==9){l = s.getEvents((Integer) request.getSession().getAttribute("employee_id"), new java.sql.Date(cal.getTimeInMillis()), 0,1000,1,false,9,request.getParameter("cnt"));}			
 			
 			//List<Event> l = s.getEvents(0, null, 0,1,121,false,0,"");
 			String res = "";
