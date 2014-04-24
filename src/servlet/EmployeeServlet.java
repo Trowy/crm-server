@@ -117,10 +117,28 @@ public class EmployeeServlet extends HttpServlet {
 				s.removeEmployee(Integer.parseInt(request.getParameter("id")));
 				
 		}
-		
+		response.getWriter().print("{success: true}");
 		} catch (CRMException e1) {			
-			e1.printStackTrace();
+			String field = "login";
+			if(e1.field_num==1){
+				field = "login";
+			}else if(e1.field_num==2){
+				field = "password";
+			}else if(e1.field_num==3){
+				field = "first_name";
+			}else if(e1.field_num==4){
+				field = "middle_name";
+			}else if(e1.field_num==5){
+				field = "last_name";
+			}else if(e1.field_num==6){
+				field = "role";
+			} 
+			response.getWriter().print("{success:false, errors: {"+field+":'"+e1.getMessage().replace("'", "\\'")+"'}}");
 		}
+		
+		response.getWriter().flush();
+        response.getWriter().close();
+        
         }
 	}
 

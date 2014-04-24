@@ -127,14 +127,14 @@ public class ContractorServlet extends HttpServlet {
 				s.removeContractor(Integer.parseInt(request.getParameter("id")));
 				
 		}
-		
+		response.getWriter().print("{success: true}");
 		} catch (CRMException e1) {			
 			
-			response.getWriter().print("{success: "+e1.getMessage()+"}");
-			response.getWriter().flush();
-	        response.getWriter().close();
+			response.getWriter().print("{success: false; errors:{name:"+e1.getMessage()+"}}");
+			
 		}
-	
+		response.getWriter().flush();
+        response.getWriter().close();
         }
 	}
 

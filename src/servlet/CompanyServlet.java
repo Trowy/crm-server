@@ -118,9 +118,8 @@ public class CompanyServlet extends HttpServlet {
 				
 				s.addCompany(c);
 				
-				response.getWriter().print("{success: true}");
-				response.getWriter().flush();
-		        response.getWriter().close();
+				
+				
 						
 						break;
 			case "edit":
@@ -139,9 +138,8 @@ public class CompanyServlet extends HttpServlet {
 						new ArrayList<Tag>());
 				s.editCompany(c_c);
 				
-				response.getWriter().print("{success: true}");
-				response.getWriter().flush();
-		        response.getWriter().close();
+				
+				
 				
 						break;
 			case "delete":
@@ -149,12 +147,19 @@ public class CompanyServlet extends HttpServlet {
 				
 		}
 		
+		response.getWriter().print("{success: true}");
+		
 		} catch (CRMException e1) {
-			response.getWriter().print("{success: false}");
-			response.getWriter().flush();
-	        response.getWriter().close();
-			e1.printStackTrace();
+			String field = "name";
+			if(e1.field_num==1){
+				field = "name";
+			}
+			response.getWriter().print("{success:false, errors: {"+field+":'"+e1.getMessage().replace("'", "\\'")+"'}}");
+			
+			
 		}
+		response.getWriter().flush();
+        response.getWriter().close();
         }
 		
 	}

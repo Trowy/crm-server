@@ -93,11 +93,15 @@ public class EventTypeServlet extends HttpServlet {
 				s.removeEventType(Integer.parseInt(request.getParameter("id")));
 				
 		}
-		
-		} catch (CRMException e1) {			
-			e1.printStackTrace();
-		}
 		response.getWriter().print("{success: true}");
+		} catch (CRMException e1) {			
+			String field = "name";
+			if(e1.field_num==1){
+				field = "name";
+			}
+			response.getWriter().print("{success:false, errors: {"+field+":'"+e1.getMessage().replace("'", "\\'")+"'}}");
+		}
+		
 		response.getWriter().flush();
         response.getWriter().close();
         }
