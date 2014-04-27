@@ -1,6 +1,7 @@
 package servlet;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -10,6 +11,12 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.FilenameUtils;
 
 import service.CRMException;
 import service.Service;
@@ -101,11 +108,11 @@ public class EventServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		if(request.getHeader("Origin").contains("http://crm.local")){
+		//if(request.getHeader("Origin").contains("http://crm.local")){
         	response.addHeader("Access-Control-Allow-Origin","http://crm.local");
-        }else{
-        	response.addHeader("Access-Control-Allow-Origin","http://crm-tusur.6te.net");
-        }
+        //}else{
+        	//response.addHeader("Access-Control-Allow-Origin","http://crm-tusur.6te.net");
+        //}
         response.addHeader("Access-Control-Allow-Methods","GET, PUT, POST, DELETE, OPTIONS");
         response.addHeader("Access-Control-Max-Age","000");
         response.addHeader("Access-Control-Allow-Headers","Content-Type, Authorization, X-Requested-With");
@@ -114,12 +121,40 @@ public class EventServlet extends HttpServlet {
         response.setContentType("application/json; charset=windows-1251");
         if(request.getSession().getAttribute("employee_id") != null){
 		try {
+			String fieldvalue = "";
 			Service s = Service.getService();
 			System.out.println(request.getParameter("action"));
 			String[] date;
-		switch(request.getParameter("action")){
+			List<FileItem> items = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
+			for (FileItem item : items) {
+	            
+				if(item.getFieldName().equals("action")){
+					fieldvalue = item.getString();
+				}
+	                        
+	                
+	            
+	            
+	        }
+		switch(fieldvalue){
 		
 			case "new":
+			
+				 for (FileItem item : items) {
+			            if (item.isFormField()) {
+			                // Process regular form field (input type="text|radio|checkbox|etc", select, etc).
+			                String fieldname = item.getFieldName();
+			                String fieldvalue1 = item.getString();
+			                // ... (do your job here)
+			            } else {
+			                // Process form file field (input type="file").
+			                String fieldname = item.getFieldName();
+			                String filename = FilenameUtils.getName(item.getName());
+			                InputStream filecontent = item.getInputStream();
+			                response.getWriter().print(fieldname+" "+filename+"<br>");
+			            }
+			        }
+			/*
 				date = request.getParameter("date").split("-");
 				Event e = new Event(0, 
 						request.getParameter("title"),
@@ -136,7 +171,7 @@ public class EventServlet extends HttpServlet {
 					
 				
 				s.addEvent(e);
-				
+				*/
 				
 						break;
 			case "edit":
@@ -163,7 +198,9 @@ public class EventServlet extends HttpServlet {
 		
 		} catch (CRMException e1) {			
 			e1.printStackTrace();
-		}
+		} catch (FileUploadException e1) {
+			
+			}
 		response.getWriter().print("{success: true}");
 		response.getWriter().flush();
         response.getWriter().close();
