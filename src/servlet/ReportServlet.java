@@ -48,7 +48,7 @@ public class ReportServlet extends HttpServlet {
         
 			
 			try {
-				Service s = new Service();
+				Service s = Service.getService();
 				int type=Integer.parseInt(request.getParameter("type"));
 				response.getWriter().print(s.generateReport(type));
 			} catch (CRMException e) {

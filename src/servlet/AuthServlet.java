@@ -16,7 +16,7 @@ import entity.Employee;
 @WebServlet("/auth")
 public class AuthServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
+    	
     public AuthServlet() {    	
         super();
     }
@@ -64,7 +64,7 @@ public class AuthServlet extends HttpServlet {
         
 		try {
 			
-			Service s = new Service();			
+			Service s = Service.getService();		
 			Employee e = s.auth(request.getParameter("auth_login"), request.getParameter("auth_pass"));			
 			response.getWriter().print("{success:true, employee_id: '"+e.getId()+"', employee_role: '"+e.getRole()+"'}");			
 			request.getSession().setAttribute("employee_id", e.getId());

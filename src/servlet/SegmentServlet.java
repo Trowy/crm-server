@@ -39,7 +39,7 @@ public class SegmentServlet extends HttpServlet {
         response.setContentType("application/json; charset=windows-1251");
         if(request.getSession().getAttribute("employee_id") != null){
         try {
-			Service s = new Service();
+			Service s = Service.getService();
 			List<Segment> l = s.getSegments();
 			String res = "";
 			if(l.size()==0){res=",";}
@@ -71,7 +71,7 @@ public class SegmentServlet extends HttpServlet {
         response.setContentType("application/json; charset=windows-1251");
         if(request.getSession().getAttribute("employee_id") != null){
 		try {
-			Service s = new Service();
+			Service s = Service.getService();
 			
 		switch(request.getParameter("action")){
 		

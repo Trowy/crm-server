@@ -58,7 +58,7 @@ public class EventServlet extends HttpServlet {
         	
         	
         	
-			Service s = new Service();
+			Service s = Service.getService();
 			int type=Integer.parseInt(request.getParameter("type"));
 			
 			if(type==2 || type==5 || type==8){
@@ -114,12 +114,13 @@ public class EventServlet extends HttpServlet {
         response.setContentType("application/json; charset=windows-1251");
         if(request.getSession().getAttribute("employee_id") != null){
 		try {
-			Service s = new Service();
+			Service s = Service.getService();
 			System.out.println(request.getParameter("action"));
-			String[] date = request.getParameter("date").split("-");
+			String[] date;
 		switch(request.getParameter("action")){
 		
 			case "new":
+				date = request.getParameter("date").split("-");
 				Event e = new Event(0, 
 						request.getParameter("title"),
 						request.getParameter("info"),
@@ -139,7 +140,7 @@ public class EventServlet extends HttpServlet {
 				
 						break;
 			case "edit":
-				
+				date = request.getParameter("date").split("-");
 				Event e_e = new Event(Integer.parseInt(request.getParameter("id")), 
 						request.getParameter("title"),
 						request.getParameter("info"),

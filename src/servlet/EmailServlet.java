@@ -51,7 +51,7 @@ public class EmailServlet extends HttpServlet {
         if(request.getSession().getAttribute("employee_id") != null){
 		Service s;
 		try {
-			s = new Service();
+			s = Service.getService();
 			s.sendEmail("tserem.tusurov@yandex.ru", request.getParameter("password"), request.getParameter("toSend"), request.getParameter("subject"), request.getParameter("text"), null, null, null);
 		} catch (CRMException e) {
 			// TODO Auto-generated catch block

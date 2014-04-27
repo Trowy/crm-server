@@ -45,7 +45,7 @@ public class EmployeeServlet extends HttpServlet {
         response.setContentType("application/json; charset=windows-1251");
         if(request.getSession().getAttribute("employee_id") != null){
         try {
-			Service s = new Service();
+			Service s = Service.getService();
 			List<Employee> l = s.getEmployees();
 			String res = "";
 			if(l.size()==0){res=",";}
@@ -80,7 +80,7 @@ public class EmployeeServlet extends HttpServlet {
         response.setContentType("application/json; charset=windows-1251");
         if(request.getSession().getAttribute("employee_id") != null){
 		try {
-			Service s = new Service();
+			Service s = Service.getService();
 			
 		switch(request.getParameter("action")){
 		

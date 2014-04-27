@@ -38,7 +38,7 @@ public class EventTypeServlet extends HttpServlet {
         response.setContentType("application/json; charset=windows-1251");
         if(request.getSession().getAttribute("employee_id") != null){
         try {
-			Service s = new Service();
+			Service s = Service.getService();
 			List<EventType> l = s.getEventTypes();
 			String res = "";
 			if(l.size()==0){res=",";}
@@ -70,7 +70,7 @@ public class EventTypeServlet extends HttpServlet {
         response.setContentType("application/json; charset=windows-1251");
         if(request.getSession().getAttribute("employee_id") != null){
 		try {
-			Service s = new Service();
+			Service s = Service.getService();
 			
 		switch(request.getParameter("action")){
 		

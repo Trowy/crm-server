@@ -48,13 +48,22 @@ import entity.Tag;
 
 public class Service {
 
+	private static Service serivce=null;
+	
 	private static final Logger log = Logger.getLogger(Service.class);
 	private static Connection connection;
 	private static String defaultErrorMsg = "Во время выполнения запроса произошла ошибка. "
 			+ "Попробуйте повторить попытку или свяжитесь со службой поддержки.";
 	private static Buffer buffer;
 	
-	public Service() throws CRMException {
+	public static Service getService() throws CRMException{
+		if(serivce == null){
+			serivce = new Service();
+		}		
+		return serivce;
+	}
+	
+	private Service() throws CRMException {
 		log.trace("Start DBConnection");
 		connection = PostgresqlDBConnection.getConnection();
 		refreshBuffer();

@@ -37,7 +37,7 @@ public class TagServlet extends HttpServlet {
         response.setContentType("application/json; charset=windows-1251");
         if(request.getSession().getAttribute("employee_id") != null){
         try {
-			Service s = new Service();
+			Service s = Service.getService();
 			List<Tag> l = s.getTags();
 			String res = "";
 			if(l.size()==0){res=",";}
@@ -68,7 +68,7 @@ public class TagServlet extends HttpServlet {
         response.setContentType("application/json; charset=windows-1251");
         if(request.getSession().getAttribute("employee_id") != null){
 		try {
-			Service s = new Service();
+			Service s = Service.getService();
 			
 		switch(request.getParameter("action")){
 		

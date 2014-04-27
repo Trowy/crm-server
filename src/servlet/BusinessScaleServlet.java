@@ -39,7 +39,7 @@ public class BusinessScaleServlet extends HttpServlet {
         
         if(request.getSession().getAttribute("employee_id") != null){
         try {
-			Service s = new Service();
+			Service s = Service.getService();
 			List<BusinessScale> l = s.getBusinessScales();
 			String res = "";
 			if(l.size()==0){res=",";}
@@ -71,7 +71,7 @@ public class BusinessScaleServlet extends HttpServlet {
         response.setContentType("application/json; charset=windows-1251");
         if(request.getSession().getAttribute("employee_id") != null){
 		try {
-			Service s = new Service();
+			Service s = Service.getService();
 			
 		switch(request.getParameter("action")){
 		
