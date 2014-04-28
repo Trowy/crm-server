@@ -1874,8 +1874,12 @@ public class Service {
 						else evtDelete++;
 				}
 			}
+			Employee e = getEmployee(employee_id);
+			
+			String employee_fio = e.getLast_name()+" "+e.getFirst_name()+" "+e.getMiddle_name();
 			jsonStr += "{";
-			jsonStr += "employee_id: '" + employee_id + 
+			jsonStr += "employee_id: '" + employee_id +
+						"', employee: '" + employee_fio +
 						"', cmpInsert: ' + " + cmpInsert +
 						"', cmpUpdate: ' + " + cmpUpdate +
 						"', cmpDelete: ' + " + cmpDelete +
