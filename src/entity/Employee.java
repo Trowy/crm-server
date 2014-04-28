@@ -166,6 +166,7 @@ public class Employee {
 					 "', first_name: '" + first_name +
 					 "', middle_name: '" + middle_name +
 					 "', last_name: '" + last_name +
+					 "', fio: '" + last_name + " " + first_name + " " + middle_name + 
 					 "', role: '" + role +
 					 "', email: '";
 		if (email != null) str += email;

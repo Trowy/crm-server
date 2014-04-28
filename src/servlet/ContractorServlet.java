@@ -90,7 +90,7 @@ public class ContractorServlet extends HttpServlet {
 		switch(request.getParameter("action")){
 		
 			case "new":
-				System.out.println("test");
+				
 				Contractor contractor = new Contractor(0,
 						request.getParameter("first_name"), 
 						request.getParameter("middle_name"), 

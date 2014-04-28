@@ -72,7 +72,10 @@ public class SegmentServlet extends HttpServlet {
         if(request.getSession().getAttribute("employee_id") != null){
 		try {
 			Service s = Service.getService();
+			Employee e3 = s.getEmployee((Integer) request.getSession().getAttribute("employee_id"));
+        	
 			
+	        if(e3.getRole()=='S'){
 		switch(request.getParameter("action")){
 		
 			case "new":
@@ -94,7 +97,7 @@ public class SegmentServlet extends HttpServlet {
 				s.removeSegment(Integer.parseInt(request.getParameter("id")));
 				
 		}
-		response.getWriter().print("{success: true}");
+		response.getWriter().print("{success: true}");}
 		} catch (CRMException e1) {			
 			String field = "name";
 			if(e1.field_num==1){

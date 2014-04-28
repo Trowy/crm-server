@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import service.CRMException;
 import service.Service;
+import entity.Employee;
 import entity.Segment;
 
 /**
@@ -49,8 +50,13 @@ public class ReportServlet extends HttpServlet {
 			
 			try {
 				Service s = Service.getService();
+				Employee e3 = s.getEmployee((Integer) request.getSession().getAttribute("employee_id"));
+	        	
+				
+		        if(e3.getRole()=='S'){
 				int type=Integer.parseInt(request.getParameter("type"));
 				response.getWriter().print(s.generateReport(type));
+		        }
 			} catch (CRMException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

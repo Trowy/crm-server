@@ -113,13 +113,19 @@ public class Contractor {
 						    "; skypes: " + skypes.toString()) + "\n";
 	}
 	public String toJson() {
+		String fm="",mn="",lm="";
+		if (first_name != null) fm += first_name;
+		
+		if (middle_name != null) mn += middle_name;
+		
+		if (last_name != null) lm += last_name;
+		
+		
 		String str = "{id: '" + id;
-		str += "', first_name: '";
-		if (first_name != null) str += first_name;
-		str += "', middle_name: '";
-		if (middle_name != null) str += middle_name;
-		str += "', last_name: '";
-		if (last_name != null) str += last_name;
+		str += "', first_name: '"+fm;		
+		str += "', middle_name: '"+mn;		
+		str += "', last_name: '"+lm;		
+		str += "', fio: '" + lm + " " + fm + " " + mn;
 		str += "', info: '";
 		if (info != null) str += info;
 		str += "', phones: [";

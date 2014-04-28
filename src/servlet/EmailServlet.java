@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import entity.Employee;
 import service.CRMException;
 import service.Service;
 
@@ -51,8 +52,12 @@ public class EmailServlet extends HttpServlet {
         if(request.getSession().getAttribute("employee_id") != null){
 		Service s;
 		try {
+			
 			s = Service.getService();
-			s.sendEmail("tserem.tusurov@yandex.ru", request.getParameter("password"), request.getParameter("toSend"), request.getParameter("subject"), request.getParameter("text"), null, null, null);
+			Employee e = s.getEmployee((Integer) request.getSession().getAttribute("employee_id"));
+			response.getWriter().print(e.toJson());
+			s.sendEmail(e.getEmail(), request.getParameter("password"), request.getParameter("toSend"), request.getParameter("subject"), request.getParameter("text"), null, null, null);
+			
 		} catch (CRMException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

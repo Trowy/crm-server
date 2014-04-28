@@ -69,7 +69,10 @@ public class TagServlet extends HttpServlet {
         if(request.getSession().getAttribute("employee_id") != null){
 		try {
 			Service s = Service.getService();
+			Employee e3 = s.getEmployee((Integer) request.getSession().getAttribute("employee_id"));
+        	
 			
+	        if(e3.getRole()=='S'){
 		switch(request.getParameter("action")){
 		
 			case "new":
@@ -91,7 +94,7 @@ public class TagServlet extends HttpServlet {
 				
 		}
 		response.getWriter().print("{success: true}");
-		
+	        }
 		
 		} catch (CRMException e1) {
 			String field = "name";

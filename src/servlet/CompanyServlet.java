@@ -58,8 +58,16 @@ public class CompanyServlet extends HttpServlet {
         try {
 			Service s = Service.getService();
 			String res = "";		
+			Employee e = s.getEmployee((Integer) request.getSession().getAttribute("employee_id"));
+int e_id;
 			
-			List<Company> l = s.getCompanies((Integer) request.getSession().getAttribute("employee_id"), 0, 1000, 1, false, 0, "");
+			if(e.getRole()=='M'){
+				e_id = e.getId();
+			}else{
+				e_id=0;
+			}
+			
+			List<Company> l = s.getCompanies(e_id, 0, 1000, 1, false, 0, "");
 				
 			if(l.size()==0){res=",";}
 			for (Company company : l) {
@@ -95,11 +103,20 @@ public class CompanyServlet extends HttpServlet {
         if(request.getSession().getAttribute("employee_id") != null){
 		try {
 			Service s = Service.getService();
-			
+			int e_id;
+			Employee e;
 		switch(request.getParameter("action")){
 		
 			case "new":
-
+				e = s.getEmployee((Integer) request.getSession().getAttribute("employee_id"));
+				
+				
+				
+				if(e.getRole()=='M'){
+					e_id = e.getId();
+				}else{
+					e_id=Integer.parseInt(request.getParameter("Employee"));
+				}
 				Company c = new Company(0,
 						request.getParameter("name"), 
 						request.getParameter("info"), 
@@ -111,7 +128,7 @@ public class CompanyServlet extends HttpServlet {
 						new Segment(Integer.parseInt(request.getParameter("Segment")), "", ""), 
 						new CompanyStatus(Integer.parseInt(request.getParameter("CompanyStatus")), "", ""),
 						new BusinessScale(Integer.parseInt(request.getParameter("BusinessScale")), "", ""),
-						new Employee(Integer.parseInt(request.getParameter("Employee")), "", "", "", "", "", 'S', ""), 
+						new Employee(e_id, "", "", "", "", "", 'S', ""), 
 						new ArrayList<Tag>());
 				
 									
@@ -123,6 +140,15 @@ public class CompanyServlet extends HttpServlet {
 						
 						break;
 			case "edit":
+				 e = s.getEmployee((Integer) request.getSession().getAttribute("employee_id"));
+				
+				
+				
+				if(e.getRole()=='M'){
+					e_id = e.getId();
+				}else{
+					e_id=0;
+				}
 				Company c_c = new Company(Integer.parseInt(request.getParameter("id")),
 						request.getParameter("name"), 
 						request.getParameter("info"), 
@@ -134,7 +160,7 @@ public class CompanyServlet extends HttpServlet {
 						new Segment(Integer.parseInt(request.getParameter("Segment")), "", ""), 
 						new CompanyStatus(Integer.parseInt(request.getParameter("CompanyStatus")), "", ""),
 						new BusinessScale(Integer.parseInt(request.getParameter("BusinessScale")), "", ""),
-						new Employee(Integer.parseInt(request.getParameter("Employee")), "", "", "", "", "", 'S', ""), 
+						new Employee(e_id, "", "", "", "", "", 'S', ""), 
 						new ArrayList<Tag>());
 				s.editCompany(c_c);
 				

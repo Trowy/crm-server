@@ -1888,4 +1888,7 @@ public class Service {
 		jsonStr += "]}";
 		return jsonStr;
 	}
+	
+	public Employee getEmployee(int employee_id) throws CRMException {           log.trace("Start getting Employee with id = " + employee_id);           return buffer.getEmployee(employee_id);      }
+	
 }
