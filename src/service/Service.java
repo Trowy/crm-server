@@ -396,7 +396,7 @@ public class Service {
 				throw new CRMException(err);
 			}
 		log.trace("End get bytes for attachment with id =  " + attachment.getId());
-		throw new CRMException(err);
+		//throw new CRMException(err);
 	}
 	
 	private InsertResult databaseInsertExec(String sqlQuery, String object) {
@@ -444,6 +444,36 @@ public class Service {
 		log.trace("End edit " + object);
 		return updateResult;
 	}
+	
+	public Attachment getAttachmentById(int attachment_id) throws CRMException {
+
+        log.trace("Start getting attachment with id = " + attachment_id);
+        Attachment attachment = null;
+
+        try {
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery("SELECT * FROM get_attachment_by_id(" + attachment_id + ")");
+             while (resultSet.next()) {
+                  attachment = new Attachment(
+                            attachment_id, 
+                            resultSet.getInt("event_id"),
+                            resultSet.getString("name"), 
+                            resultSet.getString("extension"),
+                            resultSet.getLong("size"),
+                            resultSet.getBytes("file"));
+             }
+             resultSet.close();
+             statement.close();
+             } catch (SQLException e1) {
+                  log.debug("Error: ", e1);
+                  throw new CRMException(defaultErrorMsg + "\n" + e1.toString());
+             }
+
+        log.trace("Finish getting attachment with id = " + attachment_id);
+
+        return attachment;
+
+   }
 	
 	public List<Tag> getTags() throws CRMException {
 		log.trace("Start getting list of Tags");
@@ -1500,9 +1530,9 @@ public class Service {
 	public void editCity(City city) throws CRMException {
 		String sqlQuery = "SELECT * FROM edit_city(" + city.getId() + ", '" + city.getName() + "'";
 		if (city.getCode() != 0)
-			sqlQuery += ", code := " + city.getCode();
+			sqlQuery += ",  " + city.getCode();
 		if (city.getTime_zone() != 0)
-			sqlQuery += ", time_zone := " + city.getTime_zone();
+			sqlQuery += ",  " + city.getTime_zone();
 		sqlQuery += ")";
 		UpdateResult updateResult = databaseUpdateExec(sqlQuery, " city with name '" + city.getName() + "'");
 		if (updateResult.getErr_code() == 0) {
@@ -1543,6 +1573,7 @@ public class Service {
 		if (employee.getEmail() != null && employee.getEmail() != null)
 			sqlQuery += ", email_n := '" + employee.getEmail() + "'";
 		sqlQuery += ")";
+		
 		UpdateResult updateResult = databaseUpdateExec(sqlQuery, " employee with last name '" + employee.getLast_name() + "'");
 		if (updateResult.getErr_code() != 0) throw new CRMException(updateResult.getErr_msg());
 	}
@@ -1824,8 +1855,8 @@ public class Service {
         transport.sendMessage(message, message.getAllRecipients());
         transport.close();
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw new CRMException("При отправке письма произошла ошибка. Проверьте настройки соединения с почтовым сервисом и повторите попытку.");
+			//e.printStackTrace();
+			throw new CRMException("При отправке письма произошла ошибка "+e.getMessage()+". Проверьте настройки соединения с почтовым сервисом и повторите попытку.");
 		}
 	}
 	

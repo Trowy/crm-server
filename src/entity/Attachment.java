@@ -142,11 +142,11 @@ public class Attachment {
 	public String toJson() {
 		return new String(
 			   "{ id: '" + id + 
-			  "'; event_id: '" + event_id + 
-			  "'; name: '" + name + 
-			  "'; extension: '"+ extension +
-			  "'; size: '" + size + 
-			  "'; file: '" + file + "'}");
+			  "', event_id: '" + event_id + 
+			  "', name: '" + name + 
+			  "', extension: '"+ extension +
+			  "', size: '" + size + 
+			  "', file: '" + file + "'}");
 	}
 	public String fileToJson() {
 		return new String ("{file: '}" + file + "'}");

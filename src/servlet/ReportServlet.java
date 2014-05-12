@@ -33,11 +33,12 @@ public class ReportServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		if(request.getHeader("Origin").contains("http://crm.local")){
-        	response.addHeader("Access-Control-Allow-Origin","http://crm.local");
-        }else{
-        	response.addHeader("Access-Control-Allow-Origin","http://crm-tusur.6te.net");
-        }
+		if(request.getHeader("Origin")!=null){
+    		response.addHeader("Access-Control-Allow-Origin",request.getHeader("Origin"));
+        
+    	}else{
+    		response.addHeader("Access-Control-Allow-Origin","*");
+    	}
         response.addHeader("Access-Control-Allow-Methods","GET, PUT, POST, DELETE, OPTIONS");
         response.addHeader("Access-Control-Max-Age","000");
         response.addHeader("Access-Control-Allow-Headers","Content-Type, Authorization, X-Requested-With");
@@ -60,7 +61,7 @@ public class ReportServlet extends HttpServlet {
 			} catch (CRMException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			} 
 			
 		
         
@@ -74,11 +75,12 @@ public class ReportServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		if(request.getHeader("Origin").contains("http://crm.local")){
-    	response.addHeader("Access-Control-Allow-Origin","http://crm.local");
-    }else{
-    	response.addHeader("Access-Control-Allow-Origin","http://crm-tusur.6te.net");
-    }
+		if(request.getHeader("Origin")!=null){
+    		response.addHeader("Access-Control-Allow-Origin",request.getHeader("Origin"));
+        
+    	}else{
+    		response.addHeader("Access-Control-Allow-Origin","*");
+    	}
     response.addHeader("Access-Control-Allow-Methods","GET, PUT, POST, DELETE, OPTIONS");
     response.addHeader("Access-Control-Max-Age","000");
     response.addHeader("Access-Control-Allow-Headers","Content-Type, Authorization, X-Requested-With");

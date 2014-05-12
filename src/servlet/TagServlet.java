@@ -24,11 +24,12 @@ public class TagServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	if(request.getHeader("Origin").contains("http://crm.local")){
-        	response.addHeader("Access-Control-Allow-Origin","http://crm.local");
-        }else{
-        	response.addHeader("Access-Control-Allow-Origin","http://crm-tusur.6te.net");
-        }
+    	if(request.getHeader("Origin")!=null){
+    		response.addHeader("Access-Control-Allow-Origin",request.getHeader("Origin"));
+        
+    	}else{
+    		response.addHeader("Access-Control-Allow-Origin","*");
+    	}
         response.addHeader("Access-Control-Allow-Methods","GET, PUT, POST, DELETE, OPTIONS");
         response.addHeader("Access-Control-Max-Age","000");
         response.addHeader("Access-Control-Allow-Headers","Content-Type, Authorization, X-Requested-With");
@@ -55,11 +56,12 @@ public class TagServlet extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		if(request.getHeader("Origin").contains("http://crm.local")){
-        	response.addHeader("Access-Control-Allow-Origin","http://crm.local");
-        }else{
-        	response.addHeader("Access-Control-Allow-Origin","http://crm-tusur.6te.net");
-        }
+		if(request.getHeader("Origin")!=null){
+    		response.addHeader("Access-Control-Allow-Origin",request.getHeader("Origin"));
+        
+    	}else{
+    		response.addHeader("Access-Control-Allow-Origin","*");
+    	}
         response.addHeader("Access-Control-Allow-Methods","GET, PUT, POST, DELETE, OPTIONS");
         response.addHeader("Access-Control-Max-Age","000");
         response.addHeader("Access-Control-Allow-Headers","Content-Type, Authorization, X-Requested-With");
@@ -73,13 +75,16 @@ public class TagServlet extends HttpServlet {
         	
 			
 	        if(e3.getRole()=='S'){
+	        	
 		switch(request.getParameter("action")){
 		
 			case "new":
+				
 				Tag e = new Tag(0, request.getParameter("name"), request.getParameter("info"));
 						
 				
 				s.addTag(e);
+				
 						
 						break;
 			case "edit":
@@ -87,15 +92,16 @@ public class TagServlet extends HttpServlet {
 				Tag e_e = new Tag(Integer.parseInt(request.getParameter("id")), request.getParameter("name"), request.getParameter("info"));
 										
 						s.editTag(e_e);
-						
+				
 						break;
 			case "delete":
+				
 				s.removeTag(Integer.parseInt(request.getParameter("id")));
+				
 				
 		}
 		response.getWriter().print("{success: true}");
 	        }
-		
 		} catch (CRMException e1) {
 			String field = "name";
 			if(e1.field_num==1){
@@ -103,6 +109,8 @@ public class TagServlet extends HttpServlet {
 			}
 			response.getWriter().print("{success:false, errors: {"+field+":'"+e1.getMessage().replace("'", "\\'")+"'}}");
 			
+		} catch (Exception e) {
+			response.getWriter().print("{success:false, errors: {name:'"+e.getMessage().replace("'", "\\'")+"'}}");
 		}
 		response.getWriter().flush();
         response.getWriter().close();

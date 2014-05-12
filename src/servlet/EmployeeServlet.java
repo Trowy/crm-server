@@ -32,11 +32,12 @@ public class EmployeeServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		if(request.getHeader("Origin").contains("http://crm.local")){
-        	response.addHeader("Access-Control-Allow-Origin","http://crm.local");
-        }else{
-        	response.addHeader("Access-Control-Allow-Origin","http://crm-tusur.6te.net");
-        }
+		if(request.getHeader("Origin")!=null){
+    		response.addHeader("Access-Control-Allow-Origin",request.getHeader("Origin"));
+        
+    	}else{
+    		response.addHeader("Access-Control-Allow-Origin","*");
+    	}
         response.addHeader("Access-Control-Allow-Methods","GET, PUT, POST, DELETE, OPTIONS");
         response.addHeader("Access-Control-Max-Age","000");
         response.addHeader("Access-Control-Allow-Headers","Content-Type, Authorization, X-Requested-With");
@@ -67,11 +68,12 @@ public class EmployeeServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		if(request.getHeader("Origin").contains("http://crm.local")){
-        	response.addHeader("Access-Control-Allow-Origin","http://crm.local");
-        }else{
-        	response.addHeader("Access-Control-Allow-Origin","http://crm-tusur.6te.net");
-        }
+		if(request.getHeader("Origin")!=null){
+    		response.addHeader("Access-Control-Allow-Origin",request.getHeader("Origin"));
+        
+    	}else{
+    		response.addHeader("Access-Control-Allow-Origin","*");
+    	}
         response.addHeader("Access-Control-Allow-Methods","GET, PUT, POST, DELETE, OPTIONS");
         response.addHeader("Access-Control-Max-Age","000");
         response.addHeader("Access-Control-Allow-Headers","Content-Type, Authorization, X-Requested-With");
@@ -102,17 +104,20 @@ public class EmployeeServlet extends HttpServlet {
 						
 						break;
 			case "edit":
-				
+				Employee e_old = s.getEmployee(Integer.parseInt(request.getParameter("id")));
 				Employee e_e = new Employee(Integer.parseInt(request.getParameter("id")), 
 						request.getParameter("login"),
-						request.getParameter("password"),
+						request.getParameter("password").equals("")?e_old.getPassword():request.getParameter("password"),
 						request.getParameter("first_name"),
 						request.getParameter("middle_name"),
 						request.getParameter("last_name"),
 						request.getParameter("role").charAt(0),
 						request.getParameter("email"));
-				e_e.hashPassword();
-						
+				response.getWriter().println(e_e.toString());
+				if(!request.getParameter("password").equals("")){
+					e_e.hashPassword();					
+				}
+				response.getWriter().println(e_e.toString());
 						s.editEmployee(e_e);
 						
 						break;
@@ -135,8 +140,12 @@ public class EmployeeServlet extends HttpServlet {
 				field = "last_name";
 			}else if(e1.field_num==6){
 				field = "role";
-			} 
+			}
+			e1.printStackTrace();
 			response.getWriter().print("{success:false, errors: {"+field+":'"+e1.getMessage().replace("'", "\\'")+"'}}");
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.getWriter().print("{success:false, errors: {login:'"+e.getMessage().replace("'", "\\'")+"'}}");
 		}
 		
 		response.getWriter().flush();

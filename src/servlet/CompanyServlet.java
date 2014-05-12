@@ -41,11 +41,12 @@ public class CompanyServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		if(request.getHeader("Origin").contains("http://crm.local")){
-        	response.addHeader("Access-Control-Allow-Origin","http://crm.local");
-        }else{
-        	response.addHeader("Access-Control-Allow-Origin","http://crm-tusur.6te.net");
-        }
+		if(request.getHeader("Origin")!=null){
+    		response.addHeader("Access-Control-Allow-Origin",request.getHeader("Origin"));
+        
+    	}else{
+    		response.addHeader("Access-Control-Allow-Origin","*");
+    	}
         response.addHeader("Access-Control-Allow-Methods","GET, PUT, POST, DELETE, OPTIONS");
         response.addHeader("Access-Control-Max-Age","000");
         response.addHeader("Access-Control-Allow-Headers","Content-Type, Authorization, X-Requested-With");
@@ -89,11 +90,12 @@ int e_id;
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		if(request.getHeader("Origin").contains("http://crm.local")){
-        	response.addHeader("Access-Control-Allow-Origin","http://crm.local");
-        }else{
-        	response.addHeader("Access-Control-Allow-Origin","http://crm-tusur.6te.net");
-        }
+		if(request.getHeader("Origin")!=null){
+    		response.addHeader("Access-Control-Allow-Origin",request.getHeader("Origin"));
+        
+    	}else{
+    		response.addHeader("Access-Control-Allow-Origin","*");
+    	}
         response.addHeader("Access-Control-Allow-Methods","GET, PUT, POST, DELETE, OPTIONS");
         response.addHeader("Access-Control-Max-Age","000");
         response.addHeader("Access-Control-Allow-Headers","Content-Type, Authorization, X-Requested-With");
@@ -105,11 +107,37 @@ int e_id;
 			Service s = Service.getService();
 			int e_id;
 			Employee e;
+			List<String> sk = new ArrayList<String>();
+			List<String> p = new ArrayList<String>();
+			List<String> em = new ArrayList<String>();
 		switch(request.getParameter("action")){
 		
 			case "new":
 				e = s.getEmployee((Integer) request.getSession().getAttribute("employee_id"));
 				
+				for(int i=0;request.getParameter("phone_"+i)!=null;i++){
+					if(!request.getParameter("phone_"+i).equals("")){
+						p.add(request.getParameter("phone_"+i));
+					}
+				}
+				
+				for(int i=0;request.getParameter("email_"+i)!=null;i++){
+					if(!request.getParameter("email_"+i).equals("")){
+						em.add(request.getParameter("email_"+i));
+					}
+				}
+				
+				for(int i=0;request.getParameter("skype_"+i)!=null;i++){
+					if(!request.getParameter("skype_"+i).equals("")){
+						sk.add(request.getParameter("skype_"+i));
+					}
+				}
+				List<Tag> t = new ArrayList<Tag>();
+				for(int i=0;request.getParameter("tag_"+i)!=null;i++){
+					if(!request.getParameter("tag_"+i).equals("")){
+						t.add(new Tag(Integer.parseInt(request.getParameter("tag_"+i)), "", ""));
+					}
+				}
 				
 				
 				if(e.getRole()=='M'){
@@ -117,19 +145,22 @@ int e_id;
 				}else{
 					e_id=Integer.parseInt(request.getParameter("Employee"));
 				}
+				
+				
+				
 				Company c = new Company(0,
 						request.getParameter("name"), 
 						request.getParameter("info"), 
 						request.getParameter("site"),
-						new ArrayList<String>(Arrays.asList(request.getParameter("phones").split(","))),//phones, 
-						new ArrayList<String>(Arrays.asList(request.getParameter("emails").split(","))), 
-						new ArrayList<String>(Arrays.asList(request.getParameter("skypes").split(","))), 
+						p,//phones, 
+						em, 
+						sk, 
 						new City(Integer.parseInt(request.getParameter("City")), "", 0, 0), 
 						new Segment(Integer.parseInt(request.getParameter("Segment")), "", ""), 
 						new CompanyStatus(Integer.parseInt(request.getParameter("CompanyStatus")), "", ""),
 						new BusinessScale(Integer.parseInt(request.getParameter("BusinessScale")), "", ""),
 						new Employee(e_id, "", "", "", "", "", 'S', ""), 
-						new ArrayList<Tag>());
+						t	);
 				
 									
 				
@@ -142,20 +173,37 @@ int e_id;
 			case "edit":
 				 e = s.getEmployee((Integer) request.getSession().getAttribute("employee_id"));
 				
-				
+				 for(int i=0;request.getParameter("phone_"+i)!=null;i++){
+						if(!request.getParameter("phone_"+i).equals("")){
+							p.add(request.getParameter("phone_"+i));
+						}
+					}
+					
+					for(int i=0;request.getParameter("email_"+i)!=null;i++){
+						if(!request.getParameter("email_"+i).equals("")){
+							em.add(request.getParameter("email_"+i));
+						}
+					}
+					
+					for(int i=0;request.getParameter("skype_"+i)!=null;i++){
+						if(!request.getParameter("skype_"+i).equals("")){
+							sk.add(request.getParameter("skype_"+i));
+						}
+					}
+					
 				
 				if(e.getRole()=='M'){
 					e_id = e.getId();
 				}else{
-					e_id=0;
+					e_id=Integer.parseInt(request.getParameter("Employee"));
 				}
 				Company c_c = new Company(Integer.parseInt(request.getParameter("id")),
 						request.getParameter("name"), 
 						request.getParameter("info"), 
 						request.getParameter("site"),
-						new ArrayList<String>(Arrays.asList(request.getParameter("phones").split(","))), 
-						new ArrayList<String>(Arrays.asList(request.getParameter("emails").split(","))), 
-						new ArrayList<String>(Arrays.asList(request.getParameter("skypes").split(","))), 
+						p, 
+						em, 
+						sk, 
 						new City(Integer.parseInt(request.getParameter("City")), "", 0, 0), 
 						new Segment(Integer.parseInt(request.getParameter("Segment")), "", ""), 
 						new CompanyStatus(Integer.parseInt(request.getParameter("CompanyStatus")), "", ""),
@@ -183,6 +231,8 @@ int e_id;
 			response.getWriter().print("{success:false, errors: {"+field+":'"+e1.getMessage().replace("'", "\\'")+"'}}");
 			
 			
+		} catch (Exception e) {
+			response.getWriter().print("{success:false, errors: {name:'"+e.getMessage().replace("'", "\\'")+"'}}");
 		}
 		response.getWriter().flush();
         response.getWriter().close();
