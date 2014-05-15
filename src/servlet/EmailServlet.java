@@ -12,31 +12,18 @@ import entity.Employee;
 import service.CRMException;
 import service.Service;
 
-/**
- * Servlet implementation class EmailServlet
- */
 @WebServlet("/email")
 public class EmailServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public EmailServlet() {
+	
+	private static final long serialVersionUID = 9111315638885142100L;
+
+	public EmailServlet() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		if(request.getHeader("Origin")!=null){
     		response.addHeader("Access-Control-Allow-Origin",request.getHeader("Origin"));

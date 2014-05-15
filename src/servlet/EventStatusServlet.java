@@ -14,104 +14,107 @@ import service.Service;
 import entity.Employee;
 import entity.EventStatus;
 
-
 @WebServlet("/event_statuses")
 public class EventStatusServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-       
-    public EventStatusServlet() {
-        super();        
-    }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	if(request.getHeader("Origin")!=null){
-    		response.addHeader("Access-Control-Allow-Origin",request.getHeader("Origin"));
-        
-    	}else{
-    		response.addHeader("Access-Control-Allow-Origin","*");
-    	}
-        response.addHeader("Access-Control-Allow-Methods","GET, PUT, POST, DELETE, OPTIONS");
-        response.addHeader("Access-Control-Max-Age","000");
-        response.addHeader("Access-Control-Allow-Headers","Content-Type, Authorization, X-Requested-With");
-        response.addHeader("Access-Control-Allow-Credentials","true");
-        response.addHeader("Content-Type","application/json");
-        response.setContentType("application/json; charset=windows-1251");
-        
-        try {
+	private static final long serialVersionUID = 5763698435771913139L;
+
+	public EventStatusServlet() {
+		super();
+	}
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		if (request.getHeader("Origin") != null) {
+			response.addHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
+
+		} else {
+			response.addHeader("Access-Control-Allow-Origin", "*");
+		}
+		response.addHeader("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS");
+		response.addHeader("Access-Control-Max-Age", "000");
+		response.addHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
+		response.addHeader("Access-Control-Allow-Credentials", "true");
+		response.addHeader("Content-Type", "application/json");
+		response.setContentType("application/json; charset=windows-1251");
+
+		try {
 			Service s = Service.getService();
 			List<EventStatus> l = s.getEventStatuses();
 			String res = "";
-			if(l.size()==0){res=",";}
+			if (l.size() == 0) {
+				res = ",";
+			}
 			for (EventStatus eventStatus : l) {
-				res += eventStatus.toJson()+",";
-			}			
-			res = res.substring(0, res.length()-1);
-			response.getWriter().print("{'data':["+res+"]}");
+				res += eventStatus.toJson() + ",";
+			}
+			res = res.substring(0, res.length() - 1);
+			response.getWriter().print("{'data':[" + res + "]}");
 		} catch (CRMException e) {
 			response.getWriter().print("{'data':[]}");
-		}       
-        
-        response.getWriter().flush();
-        response.getWriter().close();
+		}
+
+		response.getWriter().flush();
+		response.getWriter().close();
 	}
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		if(request.getHeader("Origin")!=null){
-    		response.addHeader("Access-Control-Allow-Origin",request.getHeader("Origin"));
-        
-    	}else{
-    		response.addHeader("Access-Control-Allow-Origin","*");
-    	}
-        response.addHeader("Access-Control-Allow-Methods","GET, PUT, POST, DELETE, OPTIONS");
-        response.addHeader("Access-Control-Max-Age","000");
-        response.addHeader("Access-Control-Allow-Headers","Content-Type, Authorization, X-Requested-With");
-        response.addHeader("Access-Control-Allow-Credentials","true");
-        response.addHeader("Content-Type","application/json");
-        response.setContentType("application/json; charset=windows-1251");
-        
-        if(request.getSession().getAttribute("employee_id") != null){
-		try {
-			Service s = Service.getService();
-			Employee e3 = s.getEmployee((Integer) request.getSession().getAttribute("employee_id"));
-        	
-			
-	        if(e3.getRole()=='S'){
-		switch(request.getParameter("action")){
-		
-			case "new":
-				EventStatus e = new EventStatus(0, request.getParameter("name"), request.getParameter("info"));
-						
-				
-				s.addEventStatus(e);
-						
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException,
+			IOException {
+		if (request.getHeader("Origin") != null) {
+			response.addHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
+
+		} else {
+			response.addHeader("Access-Control-Allow-Origin", "*");
+		}
+		response.addHeader("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS");
+		response.addHeader("Access-Control-Max-Age", "000");
+		response.addHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
+		response.addHeader("Access-Control-Allow-Credentials", "true");
+		response.addHeader("Content-Type", "application/json");
+		response.setContentType("application/json; charset=windows-1251");
+
+		if (request.getSession().getAttribute("employee_id") != null) {
+			try {
+				Service s = Service.getService();
+				Employee e3 = s.getEmployee((Integer) request.getSession().getAttribute("employee_id"));
+
+				if (e3.getRole() == 'S') {
+					switch (request.getParameter("action")) {
+
+					case "new":
+						EventStatus e = new EventStatus(0, request.getParameter("name"), request.getParameter("info"));
+
+						s.addEventStatus(e);
+
 						break;
-			case "edit":
-				
-				EventStatus e_e = new EventStatus(Integer.parseInt(request.getParameter("id")), request.getParameter("name"), request.getParameter("info"));
-						
-						
+					case "edit":
+
+						EventStatus e_e = new EventStatus(Integer.parseInt(request.getParameter("id")),
+								request.getParameter("name"), request.getParameter("info"));
+
 						s.editEventStatus(e_e);
-						
+
 						break;
-			case "delete":
-				s.removeEventStatus(Integer.parseInt(request.getParameter("id")));
-				
-		}
-		response.getWriter().print("{success: true}");}
-		} catch (CRMException e1) {			
-			String field = "name";
-			if(e1.field_num==1){
-				field = "name";
+					case "delete":
+						s.removeEventStatus(Integer.parseInt(request.getParameter("id")));
+
+					}
+					response.getWriter().print("{success: true}");
+				}
+			} catch (CRMException e1) {
+				String field = "name";
+				if (e1.field_num == 1) {
+					field = "name";
+				}
+				response.getWriter().print(
+						"{success:false, errors: {" + field + ":'" + e1.getMessage().replace("'", "\\'") + "'}}");
+			} catch (Exception e) {
+				response.getWriter().print(
+						"{success:false, errors: {name:'" + e.getMessage().replace("'", "\\'") + "'}}");
 			}
-			response.getWriter().print("{success:false, errors: {"+field+":'"+e1.getMessage().replace("'", "\\'")+"'}}");
-		} catch (Exception e) {
-			response.getWriter().print("{success:false, errors: {name:'"+e.getMessage().replace("'", "\\'")+"'}}");
+			response.getWriter().flush();
+			response.getWriter().close();
 		}
-		response.getWriter().flush();
-        response.getWriter().close();
-        }
-		
-		
+
 	}
 
 }
